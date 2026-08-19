@@ -7,22 +7,34 @@ def main():
     os.makedirs("data", exist_ok=True)
     
     # 1. Download scRNA-seq Reference: Mouse Cortex
-    print("Downloading Single-Cell Reference (Mouse Cortex)...")
-    adata_sc = sq.datasets.sc_mouse_cortex()
-    print(f"Downloaded scRNA-seq: {adata_sc.n_obs} cells, {adata_sc.n_vars} genes")
-    adata_sc.write("data/sc_mouse_cortex.h5ad")
+    sc_path = "data/sc_mouse_cortex.h5ad"
+    if not os.path.exists(sc_path):
+        print("Downloading Single-Cell Reference (Mouse Cortex)...")
+        adata_sc = sq.datasets.sc_mouse_cortex()
+        print(f"Downloaded scRNA-seq: {adata_sc.n_obs} cells, {adata_sc.n_vars} genes")
+        adata_sc.write(sc_path)
+    else:
+        print("Single-Cell Reference already exists.")
     
     # 2. Download In-Distribution Spatial: 10x Visium Mouse Coronal Brain
-    print("Downloading In-Distribution Spatial (10x Visium Mouse Coronal Brain)...")
-    adata_visium = sq.datasets.visium_hne_adata()
-    print(f"Downloaded Visium: {adata_visium.n_obs} spots, {adata_visium.n_vars} genes")
-    adata_visium.write("data/visium_mouse_brain.h5ad")
+    visium_path = "data/visium_mouse_brain.h5ad"
+    if not os.path.exists(visium_path):
+        print("Downloading In-Distribution Spatial (10x Visium Mouse Coronal Brain)...")
+        adata_visium = sq.datasets.visium_hne_adata()
+        print(f"Downloaded Visium: {adata_visium.n_obs} spots, {adata_visium.n_vars} genes")
+        adata_visium.write(visium_path)
+    else:
+        print("Visium data already exists.")
     
     # 3. Download Shifted Spatial: Slide-seqV2 Mouse Hippocampus
-    print("Downloading Shifted Spatial (Slide-seqV2 Mouse Hippocampus)...")
-    adata_slideseq = sq.datasets.slide_seqv2()
-    print(f"Downloaded Slide-seqV2: {adata_slideseq.n_obs} spots, {adata_slideseq.n_vars} genes")
-    adata_slideseq.write("data/slideseqv2_mouse_hippocampus.h5ad")
+    slideseq_path = "data/slideseqv2_mouse_hippocampus.h5ad"
+    if not os.path.exists(slideseq_path):
+        print("Downloading Shifted Spatial (Slide-seqV2 Mouse Hippocampus)...")
+        adata_slideseq = sq.datasets.slideseqv2()
+        print(f"Downloaded Slide-seqV2: {adata_slideseq.n_obs} spots, {adata_slideseq.n_vars} genes")
+        adata_slideseq.write(slideseq_path)
+    else:
+        print("Slide-seqV2 data already exists.")
     
     print("All datasets downloaded and saved to data/ directory successfully!")
 
