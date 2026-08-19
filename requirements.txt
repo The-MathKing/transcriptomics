@@ -1,0 +1,11 @@
+scanpy
+squidpy
+scvi-tools
+torch
+netcal
+jupyter
+matplotlib
+seaborn
+pandas
+numpy
+scikit-learn
