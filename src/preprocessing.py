@@ -77,7 +77,8 @@ def main():
     adata_pseudo.obs_names = [f"pseudo_{i}" for i in range(n_spots)]
     
     # Save proportions to obsm
-    prop_df = pd.DataFrame(pseudo_props, index=adata_pseudo.obs_names, columns=cell_types)
+    sanitized_cell_types = [str(ct).replace("/", "_") for ct in cell_types]
+    prop_df = pd.DataFrame(pseudo_props, index=adata_pseudo.obs_names, columns=sanitized_cell_types)
     adata_pseudo.obsm["proportions"] = prop_df
     
     print("Saving preprocessed datasets...")
