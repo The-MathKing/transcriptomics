@@ -30,7 +30,7 @@ Spatial Transcriptomics, Uncertainty Calibration, Variational Inference, Distrib
 \end{keywords}
 
 \paragraph*{Data and Code Availability}
-We utilize the public Mouse Cortex scRNA-seq and 10x Visium Coronal Mouse Brain datasets available via the \texttt{squidpy} python package (\url{https://squidpy.readthedocs.io}). All code to reproduce this pipeline and data preprocessing is available in our GitHub repository.
+We utilize the public Mouse Cortex scRNA-seq and 10x Visium Coronal Mouse Brain datasets available via the \texttt{squidpy} python package (\url{https://squidpy.readthedocs.io}). All code to reproduce this pipeline and data preprocessing is available in our GitHub repository at \url{https://github.com/The-MathKing/transcriptomics}.
 \paragraph*{Institutional Review Board (IRB)}
 This research uses entirely publicly available, anonymized animal data and does not require IRB approval.
 
@@ -50,9 +50,9 @@ A unique DestVI model was trained on the shifted data utilizing a shared CondSCV
 
 \section{Results}
 \label{sec:results}
-Our results (Figure \ref{fig:rel}) show that DestVI has an In-Distribution Expected Calibration Error (ECE) of 0.226. This baseline indicates that out-of-the-box variational models exhibit some degree of miscalibration. 
+Our results (Figure \ref{fig:rel}) show that DestVI has an In-Distribution Expected Calibration Error (ECE) of 0.233. This baseline indicates that out-of-the-box variational models exhibit some degree of miscalibration. 
 
-Under cross-platform shift (80\% capture efficiency reduction), the calibration degraded significantly, with ECE increasing to 0.249. By optimizing temperature scaling on the shifted predictions, we restored calibration and reduced the ECE to 0.086.
+Under cross-platform shift (80\% capture efficiency reduction), the calibration degraded significantly, with ECE increasing to 0.207. By optimizing temperature scaling on the shifted predictions, we restored calibration and reduced the ECE to 0.060.
 
 \begin{figure}[htbp]
 \floatconts

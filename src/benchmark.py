@@ -187,7 +187,7 @@ Spatial Transcriptomics, Uncertainty Calibration, Variational Inference, Distrib
 \end{keywords}
 
 \paragraph*{Data and Code Availability}
-We utilize the public Mouse Cortex scRNA-seq and 10x Visium Coronal Mouse Brain datasets available via the \texttt{squidpy} python package (\url{https://squidpy.readthedocs.io}). All code to reproduce this pipeline and data preprocessing is available in our GitHub repository.
+We utilize the public Mouse Cortex scRNA-seq and 10x Visium Coronal Mouse Brain datasets available via the \texttt{squidpy} python package (\url{https://squidpy.readthedocs.io}). All code to reproduce this pipeline and data preprocessing is available in our GitHub repository at \url{https://github.com/The-MathKing/transcriptomics}.
 \paragraph*{Institutional Review Board (IRB)}
 This research uses entirely publicly available, anonymized animal data and does not require IRB approval.
 
