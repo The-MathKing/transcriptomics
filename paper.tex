@@ -22,7 +22,7 @@
 \maketitle
 
 \begin{abstract}
-Spatial transcriptomics models, particularly those based on variational autoencoders like DestVI, are increasingly used for clinical and biological discovery. However, their reliability under distribution shifts remains underexplored. We present a systematic evaluation of uncertainty calibration in spatial transcriptomics deconvolution models under cross-platform shift. Using Monte Carlo sampling of the posterior, we find that models exhibit baseline calibration error on in-distribution data, and this calibration degrades significantly when applied to shifted data with lower capture efficiencies. Furthermore, we demonstrate that a lightweight post-hoc temperature scaling step reduces this miscalibration effectively.
+Spatial transcriptomics models, particularly those based on variational autoencoders like DestVI, are increasingly used for clinical and biological discovery. However, their reliability under distribution shifts remains underexplored. We present a systematic evaluation of uncertainty calibration in spatial transcriptomics deconvolution models under cross-platform shift across multiple random initializations. Using Monte Carlo sampling of the posterior, we find that models exhibit baseline calibration error on in-distribution data, and this calibration degrades significantly when applied to shifted data with lower capture efficiencies. Furthermore, we demonstrate that a lightweight post-hoc temperature scaling step reduces this miscalibration effectively.
 \end{abstract}
 
 \begin{keywords}
@@ -46,25 +46,25 @@ We benchmarked the variational inference model DestVI on mouse cortex data. We e
 
 To establish ground-truth for ECE computation, we generated synthetic pseudo-spots by sampling and aggregating cells from the mouse cortex scRNA-seq reference. To simulate cross-platform shifts (such as moving from 10x Visium to Slide-seqV2), we synthetically downsampled the capture rate of the pseudo-spots by 80\% via a binomial dropout process. This induces a technical distribution shift corresponding to lower mRNA capture efficiencies. 
 
-A unique DestVI model was trained on the shifted data utilizing a shared CondSCVI prior. Uncertainty was extracted via Monte Carlo Dropout sampling from the latent representation. We applied temperature scaling to correct the posterior proportions.
+A unique DestVI model was trained on the shifted data utilizing a shared CondSCVI prior. We report metrics as mean $\pm$ standard deviation across 3 independent replicate trainings with varying random seeds. Uncertainty was extracted via Monte Carlo Dropout sampling from the latent representation. We applied temperature scaling to correct the posterior proportions.
 
 \section{Results}
 \label{sec:results}
-Our results (Figure \ref{fig:rel}) show that DestVI has an In-Distribution Expected Calibration Error (ECE) of 0.233. This baseline indicates that out-of-the-box variational models exhibit some degree of miscalibration. 
+Our results (Figure \ref{fig:rel}) show that DestVI has an In-Distribution Expected Calibration Error (ECE) of 0.213 $\pm$ 0.009. This baseline indicates that out-of-the-box variational models exhibit some degree of miscalibration. 
 
-Under cross-platform shift (80\% capture efficiency reduction), the calibration degraded significantly, with ECE increasing to 0.207. By optimizing temperature scaling on the shifted predictions, we restored calibration and reduced the ECE to 0.060.
+Under cross-platform shift (80\% capture efficiency reduction), the calibration degraded significantly, with ECE increasing to 0.224 $\pm$ 0.006. By optimizing temperature scaling on the shifted predictions, we restored calibration and reduced the ECE to 0.067 $\pm$ 0.003.
 
 \begin{figure}[htbp]
 \floatconts
   {fig:rel}
-  {\caption{Reliability diagrams showing model calibration on In-Distribution vs Shifted pseudo-spots.}}
+  {\caption{Representative reliability diagrams showing model calibration on In-Distribution vs Shifted pseudo-spots for a single initialization seed.}}
   {\includegraphics[width=\linewidth]{figures/reliability_diagram.png}}
 \end{figure}
 
 \begin{figure}[htbp]
 \floatconts
   {fig:ece}
-  {\caption{ECE stability across capture-rate distribution shifts.}}
+  {\caption{ECE stability across capture-rate distribution shifts. Error bars denote $\pm 1$ standard deviation across 3 random replicate initializations.}}
   {\includegraphics[width=\linewidth]{figures/ece_degradation.png}}
 \end{figure}
 

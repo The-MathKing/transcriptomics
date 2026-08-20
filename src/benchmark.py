@@ -72,85 +72,103 @@ def optimize_temperature(true_p, pred_p):
             best_t = t
     return best_t, best_ece
 
-def main():
-    print("Loading data...")
-    adata_sc = sc.read_h5ad("data/processed_sc_reference.h5ad")
-    adata_st = sc.read_h5ad("data/processed_pseudospots.h5ad")
+def run_replicate(adata_sc, adata_st, adata_ood, seed):
+    scvi.settings.seed = seed
     
-    # Generate OOD data (cross-platform shift simulation via downsampling)
-    print("Generating OOD data via capture-rate shift...")
-    adata_ood = downsample_counts(adata_st, fraction=0.2)
-    
-    print("Setting up CondSCVI...")
+    # CondSCVI
     cell_type_col = None
     for col in ["cell_subclass", "cluster", "cell_type", "labels"]:
         if col in adata_sc.obs.columns:
             cell_type_col = col
             break
-            
     scvi.model.CondSCVI.setup_anndata(adata_sc, labels_key=cell_type_col)
     sc_model = scvi.model.CondSCVI(adata_sc, weight_obs=False)
-    print("Training CondSCVI (25 epochs)...")
     sc_model.train(max_epochs=25)
     
-    print("Setting up DestVI on ID spatial data...")
+    # ID DestVI
     scvi.model.DestVI.setup_anndata(adata_st)
     st_model_id = scvi.model.DestVI.from_rna_model(adata_st, sc_model)
-    print("Training DestVI on ID data (25 epochs)...")
     st_model_id.train(max_epochs=25)
     
-    print("Extracting ID predictions via MC Dropout...")
     true_props_id = adata_st.obsm["proportions"].values
-    pred_props_id, var_id = mc_dropout_proportions(st_model_id, n_samples=20)
+    pred_props_id, _ = mc_dropout_proportions(st_model_id, n_samples=20)
+    _, _, ece_id, _ = get_calibration_stats(true_props_id, pred_props_id)
     
-    print("Setting up DestVI on OOD spatial data...")
+    # OOD DestVI
     scvi.model.DestVI.setup_anndata(adata_ood)
     st_model_ood = scvi.model.DestVI.from_rna_model(adata_ood, sc_model)
-    print("Training DestVI on OOD data (25 epochs)...")
     st_model_ood.train(max_epochs=25)
 
-    print("Extracting OOD predictions via MC Dropout...")
     true_props_ood = adata_ood.obsm["proportions"].values
-    pred_props_ood, var_ood = mc_dropout_proportions(st_model_ood, n_samples=20)
+    pred_props_ood, _ = mc_dropout_proportions(st_model_ood, n_samples=20)
+    _, _, ece_ood, _ = get_calibration_stats(true_props_ood, pred_props_ood)
     
-    # Evaluate Calibration
-    conf_id, acc_id, ece_id, _ = get_calibration_stats(true_props_id, pred_props_id)
-    conf_ood, acc_ood, ece_ood, _ = get_calibration_stats(true_props_ood, pred_props_ood)
-    
-    # Optimize Temperature Scaling on OOD
     best_t, ece_cal = optimize_temperature(true_props_ood, pred_props_ood)
-    conf_ood_cal, acc_ood_cal, _, _ = get_calibration_stats(true_props_ood, pred_props_ood, temp=best_t)
     
-    print(f"ID ECE: {ece_id:.3f}")
-    print(f"OOD ECE: {ece_ood:.3f}")
-    print(f"Recalibrated OOD ECE: {ece_cal:.3f} (T={best_t:.2f})")
+    # Return metrics and last reliability diagrams to save time, or we just save the final diagram
+    return ece_id, ece_ood, ece_cal, best_t, true_props_id, pred_props_id, true_props_ood, pred_props_ood
+
+def main():
+    print("Loading data...")
+    adata_sc = sc.read_h5ad("data/processed_sc_reference.h5ad")
+    adata_st = sc.read_h5ad("data/processed_pseudospots.h5ad")
+    adata_ood = downsample_counts(adata_st, fraction=0.2)
     
-    print("Generating figures...")
-    os.makedirs("figures", exist_ok=True)
+    n_replicates = 3
+    seeds = [42, 123, 2026]
     
-    fig, axes = plt.subplots(1, 3, figsize=(15, 4))
-    diagram = ReliabilityDiagram(bins=10)
+    results = {"ece_id": [], "ece_ood": [], "ece_cal": [], "best_t": []}
     
-    diagram.plot(conf_id, acc_id, ax=axes[0])
-    axes[0].set_title(f"In-Distribution (Visium)\nECE: {ece_id:.3f}")
+    for i in range(n_replicates):
+        print(f"--- Running Replicate {i+1}/{n_replicates} (Seed {seeds[i]}) ---")
+        ece_id, ece_ood, ece_cal, best_t, t_id, p_id, t_ood, p_ood = run_replicate(adata_sc, adata_st, adata_ood, seeds[i])
+        results["ece_id"].append(ece_id)
+        results["ece_ood"].append(ece_ood)
+        results["ece_cal"].append(ece_cal)
+        results["best_t"].append(best_t)
+        
+        if i == n_replicates - 1:
+            # Save the reliability diagram for the final replicate
+            print("Generating representative reliability diagrams from final replicate...")
+            os.makedirs("figures", exist_ok=True)
+            conf_id, acc_id, _, _ = get_calibration_stats(t_id, p_id)
+            conf_ood, acc_ood, _, _ = get_calibration_stats(t_ood, p_ood)
+            conf_ood_cal, acc_ood_cal, _, _ = get_calibration_stats(t_ood, p_ood, temp=best_t)
+            
+            fig, axes = plt.subplots(1, 3, figsize=(15, 4))
+            diagram = ReliabilityDiagram(bins=10)
+            diagram.plot(conf_id, acc_id, ax=axes[0])
+            axes[0].set_title(f"In-Distribution (Visium)\nECE: {ece_id:.3f}")
+            diagram.plot(conf_ood, acc_ood, ax=axes[1])
+            axes[1].set_title(f"Cross-Platform Shift\nECE: {ece_ood:.3f}")
+            diagram.plot(conf_ood_cal, acc_ood_cal, ax=axes[2])
+            axes[2].set_title(f"Recalibrated (Shifted)\nECE: {ece_cal:.3f}")
+            plt.tight_layout()
+            plt.savefig("figures/reliability_diagram.png", dpi=300)
     
-    diagram.plot(conf_ood, acc_ood, ax=axes[1])
-    axes[1].set_title(f"Cross-Platform Shift\nECE: {ece_ood:.3f}")
+    mean_id = np.mean(results["ece_id"])
+    std_id = np.std(results["ece_id"])
+    mean_ood = np.mean(results["ece_ood"])
+    std_ood = np.std(results["ece_ood"])
+    mean_cal = np.mean(results["ece_cal"])
+    std_cal = np.std(results["ece_cal"])
     
-    diagram.plot(conf_ood_cal, acc_ood_cal, ax=axes[2])
-    axes[2].set_title(f"Recalibrated (Shifted)\nECE: {ece_cal:.3f}")
+    print(f"\nFinal Results across {n_replicates} replicates:")
+    print(f"ID ECE: {mean_id:.3f} +/- {std_id:.3f}")
+    print(f"OOD ECE: {mean_ood:.3f} +/- {std_ood:.3f}")
+    print(f"Recalibrated OOD ECE: {mean_cal:.3f} +/- {std_cal:.3f}")
     
-    plt.tight_layout()
-    plt.savefig("figures/reliability_diagram.png", dpi=300)
-    
+    print("Generating aggregate figures...")
     fig2, ax2 = plt.subplots(figsize=(6, 4))
     labels = ['ID (Visium)', 'Cross-Platform Shift', 'Recalibrated']
-    eces = [ece_id, ece_ood, ece_cal]
-    ax2.bar(labels, eces, color=['#4C72B0', '#C44E52', '#55A868'])
+    means = [mean_id, mean_ood, mean_cal]
+    stds = [std_id, std_ood, std_cal]
+    
+    ax2.bar(labels, means, yerr=stds, capsize=5, color=['#4C72B0', '#C44E52', '#55A868'])
     ax2.set_ylabel('Expected Calibration Error (ECE)')
-    ax2.set_title('Calibration Degradation under Shift')
-    for i, v in enumerate(eces):
-        ax2.text(i, v + 0.01, str(round(v, 3)), ha='center')
+    ax2.set_title('Calibration Degradation under Shift (3 Replicates)')
+    for i, v in enumerate(means):
+        ax2.text(i, v + stds[i] + 0.01, f"{v:.3f} $\pm$ {stds[i]:.3f}", ha='center')
     plt.tight_layout()
     plt.savefig("figures/ece_degradation.png", dpi=300)
     
@@ -179,7 +197,7 @@ def main():
 \maketitle
 
 \begin{abstract}
-Spatial transcriptomics models, particularly those based on variational autoencoders like DestVI, are increasingly used for clinical and biological discovery. However, their reliability under distribution shifts remains underexplored. We present a systematic evaluation of uncertainty calibration in spatial transcriptomics deconvolution models under cross-platform shift. Using Monte Carlo sampling of the posterior, we find that models exhibit baseline calibration error on in-distribution data, and this calibration degrades significantly when applied to shifted data with lower capture efficiencies. Furthermore, we demonstrate that a lightweight post-hoc temperature scaling step reduces this miscalibration effectively.
+Spatial transcriptomics models, particularly those based on variational autoencoders like DestVI, are increasingly used for clinical and biological discovery. However, their reliability under distribution shifts remains underexplored. We present a systematic evaluation of uncertainty calibration in spatial transcriptomics deconvolution models under cross-platform shift across multiple random initializations. Using Monte Carlo sampling of the posterior, we find that models exhibit baseline calibration error on in-distribution data, and this calibration degrades significantly when applied to shifted data with lower capture efficiencies. Furthermore, we demonstrate that a lightweight post-hoc temperature scaling step reduces this miscalibration effectively.
 \end{abstract}
 
 \begin{keywords}
@@ -203,25 +221,25 @@ We benchmarked the variational inference model DestVI on mouse cortex data. We e
 
 To establish ground-truth for ECE computation, we generated synthetic pseudo-spots by sampling and aggregating cells from the mouse cortex scRNA-seq reference. To simulate cross-platform shifts (such as moving from 10x Visium to Slide-seqV2), we synthetically downsampled the capture rate of the pseudo-spots by 80\% via a binomial dropout process. This induces a technical distribution shift corresponding to lower mRNA capture efficiencies. 
 
-A unique DestVI model was trained on the shifted data utilizing a shared CondSCVI prior. Uncertainty was extracted via Monte Carlo Dropout sampling from the latent representation. We applied temperature scaling to correct the posterior proportions.
+A unique DestVI model was trained on the shifted data utilizing a shared CondSCVI prior. We report metrics as mean $\pm$ standard deviation across 3 independent replicate trainings with varying random seeds. Uncertainty was extracted via Monte Carlo Dropout sampling from the latent representation. We applied temperature scaling to correct the posterior proportions.
 
 \section{Results}
 \label{sec:results}
-Our results (Figure \ref{fig:rel}) show that DestVI has an In-Distribution Expected Calibration Error (ECE) of """ + f"{ece_id:.3f}" + r""". This baseline indicates that out-of-the-box variational models exhibit some degree of miscalibration. 
+Our results (Figure \ref{fig:rel}) show that DestVI has an In-Distribution Expected Calibration Error (ECE) of """ + f"{mean_id:.3f} $\\pm$ {std_id:.3f}" + r""". This baseline indicates that out-of-the-box variational models exhibit some degree of miscalibration. 
 
-Under cross-platform shift (80\% capture efficiency reduction), the calibration degraded significantly, with ECE increasing to """ + f"{ece_ood:.3f}" + r""". By optimizing temperature scaling on the shifted predictions, we restored calibration and reduced the ECE to """ + f"{ece_cal:.3f}" + r""".
+Under cross-platform shift (80\% capture efficiency reduction), the calibration degraded significantly, with ECE increasing to """ + f"{mean_ood:.3f} $\\pm$ {std_ood:.3f}" + r""". By optimizing temperature scaling on the shifted predictions, we restored calibration and reduced the ECE to """ + f"{mean_cal:.3f} $\\pm$ {std_cal:.3f}" + r""".
 
 \begin{figure}[htbp]
 \floatconts
   {fig:rel}
-  {\caption{Reliability diagrams showing model calibration on In-Distribution vs Shifted pseudo-spots.}}
+  {\caption{Representative reliability diagrams showing model calibration on In-Distribution vs Shifted pseudo-spots for a single initialization seed.}}
   {\includegraphics[width=\linewidth]{figures/reliability_diagram.png}}
 \end{figure}
 
 \begin{figure}[htbp]
 \floatconts
   {fig:ece}
-  {\caption{ECE stability across capture-rate distribution shifts.}}
+  {\caption{ECE stability across capture-rate distribution shifts. Error bars denote $\pm 1$ standard deviation across 3 random replicate initializations.}}
   {\includegraphics[width=\linewidth]{figures/ece_degradation.png}}
 \end{figure}
 
