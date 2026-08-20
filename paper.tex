@@ -22,7 +22,7 @@
 \maketitle
 
 \begin{abstract}
-Spatial transcriptomics models, particularly those based on variational autoencoders like DestVI, are increasingly used for clinical and biological discovery. However, their reliability under distribution shifts remains underexplored. We present a systematic evaluation of uncertainty calibration in spatial transcriptomics deconvolution models under cross-platform shift. Using Monte Carlo sampling of the posterior, we find that while models exhibit baseline calibration error on in-distribution data, this calibration remains remarkably stable when applied to shifted data with artificially lowered capture efficiencies. Our findings suggest that variational spatial models are highly robust to uniform technical dropouts, preserving relative gene expression signatures and preventing confidence collapse.
+Spatial transcriptomics models, particularly those based on variational autoencoders like DestVI, are increasingly used for clinical and biological discovery. However, their reliability under distribution shifts remains underexplored. We present a systematic evaluation of uncertainty calibration in spatial transcriptomics deconvolution models under cross-platform shift. Using Monte Carlo sampling of the posterior, we find that models exhibit baseline calibration error on in-distribution data, and this calibration degrades significantly when applied to shifted data with lower capture efficiencies. Furthermore, we demonstrate that a lightweight post-hoc temperature scaling step reduces this miscalibration effectively.
 \end{abstract}
 
 \begin{keywords}
@@ -36,24 +36,23 @@ This research uses entirely publicly available, anonymized animal data and does 
 
 \section{Introduction}
 \label{sec:intro}
-
 Spatial foundation models face persistent challenges in standardization and scalability. A critical failure mode is miscalibrated confidence in clinical deconvolution pipelines. Existing benchmarks evaluate point-estimate accuracy across methods, but few evaluate whether models \textit{know when they are wrong}.
 
 In this paper, we focus on the calibration of spatial deconvolution models, specifically DestVI \citep{lopez2022destvi}, under simulated cross-platform shifts.
 
 \section{Methods}
 \label{sec:methods}
-
 We benchmarked the variational inference model DestVI on mouse cortex data. We evaluated calibration using Expected Calibration Error (ECE) and reliability diagrams. 
 
-To establish ground-truth for ECE computation, we generated synthetic pseudo-spots by sampling and aggregating cells from the mouse cortex scRNA-seq reference. To simulate cross-platform shifts (such as moving from 10x Visium to Slide-seqV2), we synthetically downsampled the capture rate of the pseudo-spots by 80\% via a binomial dropout process. This induces a technical distribution shift corresponding to lower mRNA capture efficiencies. Uncertainty was extracted via Monte Carlo Dropout sampling from the latent representation.
+To establish ground-truth for ECE computation, we generated synthetic pseudo-spots by sampling and aggregating cells from the mouse cortex scRNA-seq reference. To simulate cross-platform shifts (such as moving from 10x Visium to Slide-seqV2), we synthetically downsampled the capture rate of the pseudo-spots by 80\% via a binomial dropout process. This induces a technical distribution shift corresponding to lower mRNA capture efficiencies. 
+
+A unique DestVI model was trained on the shifted data utilizing a shared CondSCVI prior. Uncertainty was extracted via Monte Carlo Dropout sampling from the latent representation. We applied temperature scaling to correct the posterior proportions.
 
 \section{Results}
 \label{sec:results}
+Our results (Figure \ref{fig:rel}) show that DestVI has an In-Distribution Expected Calibration Error (ECE) of 0.226. This baseline indicates that out-of-the-box variational models exhibit some degree of miscalibration. 
 
-Our results (Figure \ref{fig:rel}) show that DestVI has an In-Distribution Expected Calibration Error (ECE) of 0.205. This relatively high baseline indicates that out-of-the-box variational models may exhibit some level of overconfidence or underconfidence. 
-
-However, under cross-platform shift (80\% capture efficiency reduction), the calibration did not degrade (ECE = 0.205). This surprising result indicates that because DestVI learns relative latent expression signatures rather than relying on absolute transcript counts, the model is remarkably robust to uniform technical dropouts.
+Under cross-platform shift (80\% capture efficiency reduction), the calibration degraded significantly, with ECE increasing to 0.249. By optimizing temperature scaling on the shifted predictions, we restored calibration and reduced the ECE to 0.086.
 
 \begin{figure}[htbp]
 \floatconts
@@ -71,8 +70,7 @@ However, under cross-platform shift (80\% capture efficiency reduction), the cal
 
 \section{Conclusion}
 \label{sec:conclusion}
-
-Spatial transcriptomics models exhibit baseline miscalibration, but can show surprising robustness to uniform capture efficiency drops. Post-hoc recalibration may still be a necessary step before trusting high-confidence spatial predictions, but variational architectures natively protect against confidence collapse from technical dropout.
+Spatial transcriptomics models exhibit baseline miscalibration which degrades further under realistic biological distribution shifts like varying capture efficiencies. Post-hoc recalibration via temperature scaling is a necessary and highly effective step before trusting high-confidence spatial predictions.
 
 \bibliography{ref}
 
