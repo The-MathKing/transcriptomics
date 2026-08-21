@@ -1,6 +1,7 @@
 \documentclass[anon,pmlr,twocolumn,10pt]{jmlr} % W&CP article
 
-\jmlrproceedings{}{Submitted to ML4H 2026: Findings}
+\providecommand{\mlhtrack}[1]{\jmlrproceedings{}{Submitted to ML4H 2026: #1}}
+\mlhtrack{Findings}
 \jmlrworkshop{Machine Learning for Health (ML4H) 2026}
 
 \urlstyle{same}
@@ -48,7 +49,7 @@ Confidence calibration of modern neural networks was formalized by \citet{guo201
 
 \section{Methods}
 \label{sec:methods}
-We benchmarked the variational inference model DestVI on mouse cortex data. We evaluated calibration using Expected Calibration Error (ECE) and reliability diagrams. Note that we define our ECE based on the discrete classification task of predicting the dominant (highest proportion) cell type within a spot, utilizing the \texttt{netcal} package.
+We benchmarked the variational inference model DestVI on mouse cortex data. We evaluated calibration using Expected Calibration Error (ECE). Note that we define our ECE based on the discrete classification task of predicting the dominant (highest proportion) cell type within a spot, utilizing the \texttt{netcal} package.
 
 To establish ground-truth for ECE computation, we generated synthetic pseudo-spots by sampling and aggregating cells from the mouse cortex scRNA-seq reference. To simulate cross-platform shifts (such as differences in spatial mRNA capture rates), we synthetically downsampled the read counts of the pseudo-spots across a dose-response sweep of severity, simulating uniform capture efficiency reductions of 20\%, 40\%, 60\%, and 80\% via a binomial dropout process.
 
