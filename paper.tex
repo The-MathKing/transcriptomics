@@ -68,12 +68,12 @@ We applied Temperature Scaling and Isotonic Regression, both fit exclusively on 
 
 \begin{table*}[htbp]
 \centering
-\small
+\footnotesize
 \caption{Expected Calibration Error (ECE) across varying magnitudes of deployment-time dropout shift, evaluated with a single frozen DestVI model trained and calibrated exclusively on clean, held-out data. All values are reported as mean $\pm$ standard deviation across 10 replicate seeds.}
 \label{tab:results}
 \begin{tabular}{lcccc}
 \toprule
-Shift Magnitude & Uncalibrated ECE & $p$-value vs.\ Baseline & Temperature Scaled ECE & Isotonic Regression ECE \\
+Shift & Uncalibrated & $p$-value (vs.\ Base) & Temperature Scaled & Isotonic Regression \\
 \midrule
 0\% Dropout (1.0, baseline) & $0.215 \pm 0.019$ & -- & $0.067 \pm 0.015$ & $0.007 \pm 0.006$ \\
 20\% Dropout (0.8) & $0.220 \pm 0.020$ & $3.88 \times 10^{-5}$ & $0.067 \pm 0.017$ & $0.008 \pm 0.007$ \\
