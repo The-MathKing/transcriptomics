@@ -4,3 +4,11 @@ models/
 __pycache__/
 *.pyc
 .ipynb_checkpoints/
+paper.tex
+paper.pdf
+ref.bib
+implementation_plan.md
+proceedings_upgrade_plan.md
+referee_review.md
+task.md
+findings_upgrade_plan.md
