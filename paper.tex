@@ -9,6 +9,12 @@
 \usepackage{siunitx}
 \usepackage[switch]{lineno}
 
+\hypersetup{
+    pdfauthor={Anonymous},
+    pdftitle={Benchmarking Confidence Calibration in Spatial Transcriptomics Models Under Distribution Shift},
+    pdfsubject={Submitted to ML4H 2026: Findings}
+}
+
 \title[Benchmarking Confidence Calibration in Spatial Transcriptomics Models Under Distribution Shift]{Benchmarking Confidence Calibration in Spatial Transcriptomics Models Under Distribution Shift}
 
 \author{
@@ -31,7 +37,7 @@ Spatial Transcriptomics, Confidence Calibration, Variational Inference, Distribu
 \end{keywords}
 
 \paragraph*{Data and Code Availability}
-We utilize the public Mouse Cortex scRNA-seq dataset available via the \texttt{squidpy} python package (\url{https://squidpy.readthedocs.io}). All code to reproduce this pipeline and data preprocessing is available in our GitHub repository at \url{https://github.com/Anonymous/transcriptomics}.
+We utilize the public Mouse Cortex scRNA-seq dataset available via the \texttt{squidpy} python package (\url{https://squidpy.readthedocs.io}). All code to reproduce this pipeline and data preprocessing is available in our GitHub repository at \url{https://anonymous.4open.science/r/transcriptomics}.
 \paragraph*{Institutional Review Board (IRB)}
 This research uses entirely publicly available, anonymized animal data and does not require IRB approval.
 
@@ -51,13 +57,13 @@ Confidence calibration of modern neural networks was formalized by \citet{guo201
 \label{sec:methods}
 We benchmarked the variational inference model DestVI on mouse cortex pseudo-spots. We evaluated calibration using Expected Calibration Error (ECE). Note that we define our ECE based on the discrete classification task of predicting the dominant (highest proportion) cell type within a spot, utilizing the \texttt{netcal} package.
 
-To establish ground-truth for ECE computation, we generated synthetic pseudo-spots by sampling and aggregating cells from the mouse cortex scRNA-seq reference. For each random seed, we partitioned the pseudo-spots into three disjoint, held-out splits: 50\% training, 25\% calibration, and 25\% test. A single DestVI model, utilizing a shared CondSCVI prior, was trained exclusively on the clean (unshifted) training split; this frozen model was never retrained or fine-tuned on shifted data. Temperature Scaling and Isotonic Regression were likewise fit exactly once, using the frozen model's predictions on the clean calibration split. To simulate deployment-time cross-platform shifts (such as differences in spatial mRNA capture rates), we synthetically downsampled the read counts of the held-out test split only, via a binomial dropout process, across a dose-response sweep of capture efficiency fractions $\{1.0, 0.8, 0.6, 0.4, 0.2\}$, where $1.0$ denotes the unshifted baseline. At each shift magnitude, we ran out-of-sample inference with the frozen DestVI model and applied the fixed Temperature Scaling and Isotonic Regression mappings, without any re-fitting, to obtain calibrated confidences on the shifted test data. This design ensures that both the base model and the post-hoc calibrators are evaluated on genuinely out-of-distribution data relative to what they were trained or calibrated on, rather than being retrained on each shifted distribution in turn.
+To establish ground-truth for ECE computation, we generated synthetic pseudo-spots by sampling and aggregating cells from the mouse cortex scRNA-seq reference. For each random seed, we partitioned the pseudo-spots into three disjoint, held-out splits: 50\% training, 25\% calibration, and 25\% test. A single DestVI model, utilizing a shared CondSCVI prior, was trained to convergence (up to 200 epochs via ELBO early stopping) exclusively on the clean (unshifted) training split; this frozen model was never retrained or fine-tuned on shifted data. Temperature Scaling and Isotonic Regression were likewise fit exactly once, using the frozen model's predictions on the clean calibration split. To simulate deployment-time cross-platform shifts (such as differences in spatial mRNA capture rates), we synthetically downsampled the read counts of the held-out test split only, via a binomial dropout process, across a dose-response sweep of dropout magnitudes $\{0\%, 20\%, 40\%, 60\%, 80\%\}$, where $0\%$ denotes the unshifted baseline. At each shift magnitude, we ran out-of-sample inference with the frozen DestVI model and applied the fixed Temperature Scaling and Isotonic Regression mappings, without any re-fitting, to obtain calibrated confidences on the shifted test data. This design ensures that both the base model and the post-hoc calibrators are evaluated on genuinely out-of-distribution data relative to what they were trained or calibrated on, rather than being retrained on each shifted distribution in turn.
 
 We report metrics as mean $\pm$ standard deviation across 10 independent replicate seeds, each with an independently resampled train/calibration/test split. We evaluated standard softmax-confidence calibration on the model's point-estimate expected proportions using the Expected Calibration Error (ECE) with $M=10$ bins:
 \begin{equation}
-\text{ECE} = \sum_{m=1}^{M} \frac{|B_m|}{N} |\text{acc}(B_m) - \text{conf}(B_m)|
+\text{ECE} = \sum_{m=1}^{M} \frac{|B_m|}{N} \left| \text{acc}(B_m) - \text{conf}(B_m) \right|
 \end{equation}
-where $B_m$ is the set of predictions falling into bin $m$. We evaluated both Temperature Scaling, which divides the pre-softmax logits $z_i$ by a learned scalar $T > 0$ to compute the new confidence $\hat{p}_i = \max \sigma(z_i / T)$, and Isotonic Regression, a non-parametric method that fits a monotonically increasing step function mapping the uncalibrated top-class confidence to the empirical accuracy on the calibration split. We note that our entire benchmarking pipeline is fully reproducible, utilizing fixed random seeds, deterministic CPU training, and publicly available code.
+where $B_m$ is the set of predictions falling into bin $m$, and $N$ is the total number of samples evaluated. We evaluated both Temperature Scaling, which divides the pre-softmax logits $z_i$ by a learned scalar $T > 0$ to compute the new confidence $\hat{p}_i = \max \sigma(z_i / T)$, and Isotonic Regression, a non-parametric method that fits a monotonically increasing step function mapping the uncalibrated top-class confidence to the empirical accuracy on the calibration split. We note that our entire benchmarking pipeline is fully reproducible, utilizing fixed random seeds, deterministic CPU training, and publicly available code.
 
 \section{Results}
 \begin{table*}[t!]
@@ -65,15 +71,15 @@ where $B_m$ is the set of predictions falling into bin $m$. We evaluated both Te
 \footnotesize
 \caption{Expected Calibration Error (ECE) across varying magnitudes of deployment-time dropout shift, evaluated with a single frozen DestVI model trained and calibrated exclusively on clean, held-out data. All values are reported as mean $\pm$ standard deviation across 10 replicate seeds.}
 \label{tab:results}
-\begin{tabular}{lcccc}
+\begin{tabular}{l r@{\,$\pm$\,}l c r@{\,$\pm$\,}l r@{\,$\pm$\,}l}
 \toprule
-Shift & Uncalibrated & $p$-value (vs.\ Base) & Temperature Scaled & Isotonic Regression \\
+Shift & \multicolumn{2}{c}{Uncalibrated} & $p$-value (vs.\ Base) & \multicolumn{2}{c}{Temperature Scaled} & \multicolumn{2}{c}{Isotonic Regression} \\
 \midrule
-0\% Dropout (1.0, baseline) & $0.215 \pm 0.019$ & -- & $0.067 \pm 0.015$ & $0.007 \pm 0.006$ \\
-20\% Dropout (0.8) & $0.220 \pm 0.020$ & $3.88 \times 10^{-5}$ & $0.067 \pm 0.017$ & $0.008 \pm 0.007$ \\
-40\% Dropout (0.6) & $0.228 \pm 0.018$ & $2.63 \times 10^{-6}$ & $0.069 \pm 0.015$ & $0.009 \pm 0.009$ \\
-60\% Dropout (0.4) & $0.238 \pm 0.018$ & $3.16 \times 10^{-6}$ & $0.069 \pm 0.015$ & $0.010 \pm 0.009$ \\
-80\% Dropout (0.2) & $0.259 \pm 0.017$ & $9.18 \times 10^{-6}$ & $0.070 \pm 0.012$ & $0.018 \pm 0.016$ \\
+0\% Dropout (1.0, baseline) & 0.215 & 0.019 & -- & 0.067 & 0.015 & 0.007 & 0.006 \\
+20\% Dropout (0.8) & 0.220 & 0.020 & $3.88 \times 10^{-5}$ & 0.067 & 0.017 & 0.008 & 0.007 \\
+40\% Dropout (0.6) & 0.228 & 0.018 & $2.63 \times 10^{-6}$ & 0.069 & 0.015 & 0.009 & 0.009 \\
+60\% Dropout (0.4) & 0.238 & 0.018 & $3.16 \times 10^{-6}$ & 0.069 & 0.015 & 0.010 & 0.009 \\
+80\% Dropout (0.2) & 0.259 & 0.017 & $9.18 \times 10^{-6}$ & 0.070 & 0.012 & 0.018 & 0.016 \\
 \bottomrule
 \end{tabular}
 \end{table*}
@@ -82,7 +88,7 @@ Our results show that, evaluated on a held-out clean test split, DestVI has a ba
 
 Under deployment-time capture efficiency shift, the frozen model's uncalibrated ECE increases modestly but consistently with shift severity, from $0.215 \pm 0.019$ at baseline to $0.259 \pm 0.017$ under the most severe (80\%) dropout tested (Table \ref{tab:results}). This increase is highly statistically significant at all evaluated shift magnitudes (all $p < 0.001$, paired $t$-test vs.\ baseline). This dose-dependent degradation is consistent with prior evidence that model calibration degrades under distribution shift \citep{ovadia2019can}, extending that finding to spatial transcriptomics deconvolution.
 
-We applied Temperature Scaling and Isotonic Regression, both fit exclusively on the clean held-out calibration split, and evaluated their fixed mappings on the shifted test data without any re-fitting. As shown in Table \ref{tab:results}, Isotonic Regression retains a numerical ECE advantage over Temperature Scaling at every shift magnitude tested, but this advantage narrows substantially as shift severity increases: from a $9.5\times$ reduction relative to Temperature Scaling at baseline ($0.007 \pm 0.006$ vs.\ $0.067 \pm 0.015$) to a $3.9\times$ reduction at the most severe shift tested ($0.018 \pm 0.016$ vs.\ $0.070 \pm 0.012$, $p=7.36 \times 10^{-5}$, paired $t$-test). Isotonic Regression's variance grows nearly three-fold over this same range (std $0.006 \rightarrow 0.016$), while Temperature Scaling's ECE and variance remain comparatively stable across the entire sweep. We hypothesize that binomial dropout's preservation of expected relative gene-expression ratios provides partial, but not complete, robustness to DestVI's argmax confidences, consistent with the modest rather than severe degradation observed; and that Isotonic Regression's higher-capacity, non-parametric mapping overfits to the exact confidence-accuracy relationship of the clean calibration split, generalizing less reliably than Temperature Scaling's single global parameter as the deployment distribution moves further from that split.
+We applied Temperature Scaling and Isotonic Regression, both fit exclusively on the clean held-out calibration split, and evaluated their fixed mappings on the shifted test data without any re-fitting. As shown in Table \ref{tab:results}, Isotonic Regression retains a numerical ECE advantage over Temperature Scaling at every shift magnitude tested, but this advantage narrows substantially as shift severity increases: from a $9.5\times$ reduction relative to Temperature Scaling at baseline ($0.007 \pm 0.006$ vs.\ $0.067 \pm 0.015$) to a $3.9\times$ reduction at the most severe shift tested ($0.018 \pm 0.016$ vs.\ $0.070 \pm 0.012$, $p=7.36 \times 10^{-5}$, paired $t$-test). As visualized in Figure \ref{fig:ece}, Isotonic Regression's variance grows nearly three-fold over this same range (std $0.006 \rightarrow 0.016$), while Temperature Scaling's ECE and variance remain comparatively stable across the entire sweep. We hypothesize that binomial dropout's preservation of expected relative gene-expression ratios provides partial, but not complete, robustness to DestVI's argmax confidences, consistent with the modest rather than severe degradation observed; and that Isotonic Regression's higher-capacity, non-parametric mapping overfits to the exact confidence-accuracy relationship of the clean calibration split, generalizing less reliably than Temperature Scaling's single global parameter as the deployment distribution moves further from that split.
 
 
 
