@@ -184,11 +184,12 @@ def run_seed_pipeline(adata_sc, adata_st, seed, fractions, epochs):
         true_props_test = adata_test_frac.obsm["proportions"].values
         pred_props_test = get_ood_proportions(st_model, adata_test_frac)
 
-        _, _, ece_raw, _ = get_calibration_stats(true_props_test, pred_props_test)
+        _, acc_raw, ece_raw, _ = get_calibration_stats(true_props_test, pred_props_test)
         _, _, ece_temp, _ = get_calibration_stats(true_props_test, pred_props_test, temp=best_t)
         _, _, ece_iso, _ = get_calibration_stats(true_props_test, pred_props_test, iso_reg=iso)
 
         seed_results["fractions"][frac] = {
+            "acc": float(np.mean(acc_raw)),
             "ece_ood": ece_raw,
             "ece_temp": ece_temp,
             "ece_iso": ece_iso,
@@ -234,10 +235,13 @@ def main():
     for frac in fractions:
         f_str = str(frac)
         final_output[f_str] = {
+            "acc": [r["fractions"][frac]["acc"] for r in all_results],
             "ece_ood": [r["fractions"][frac]["ece_ood"] for r in all_results],
             "ece_temp": [r["fractions"][frac]["ece_temp"] for r in all_results],
             "ece_iso": [r["fractions"][frac]["ece_iso"] for r in all_results],
         }
+        mean_acc = float(np.mean(final_output[f_str]["acc"]))
+        std_acc = float(np.std(final_output[f_str]["acc"]))
         mean_ood = float(np.mean(final_output[f_str]["ece_ood"]))
         std_ood = float(np.std(final_output[f_str]["ece_ood"]))
         mean_temp = float(np.mean(final_output[f_str]["ece_temp"]))
@@ -248,6 +252,7 @@ def main():
         t_stat_iso, p_val_iso = ttest_rel(final_output[f_str]["ece_temp"], final_output[f_str]["ece_iso"])
 
         final_output[f_str].update({
+            "mean_acc": mean_acc, "std_acc": std_acc,
             "mean_ood": mean_ood, "std_ood": std_ood,
             "mean_temp": mean_temp, "std_temp": std_temp,
             "mean_iso": mean_iso, "std_iso": std_iso,
@@ -259,6 +264,7 @@ def main():
             final_output[f_str]["ttest_vs_id"] = {"t_stat": float(t_stat), "p_val": float(p_val)}
 
         print(f"\nFraction {frac}:")
+        print(f"  Top-1 Accuracy:   {mean_acc:.3f} +/- {std_acc:.3f}")
         print(f"  Uncalibrated ECE: {mean_ood:.3f} +/- {std_ood:.3f}")
         print(f"  Temp Scaling ECE: {mean_temp:.3f} +/- {std_temp:.3f}")
         print(f"  Isotonic ECE: {mean_iso:.3f} +/- {std_iso:.3f} (p={p_val_iso:.4e} vs Temp)")
