@@ -141,7 +141,7 @@ def run_seed_pipeline(adata_sc, adata_st, seed, fractions, epochs):
     # --- Train CondSCVI prior on the (unshifted) single-cell reference ---
     scvi.model.CondSCVI.setup_anndata(adata_sc, labels_key=cell_type_col)
     sc_model = scvi.model.CondSCVI(adata_sc, weight_obs=False)
-    sc_model.train(max_epochs=epochs, accelerator='cpu')
+    sc_model.train(max_epochs=epochs, accelerator='cpu', early_stopping=True, train_size=0.9)
 
     # --- Split pseudo-spots into train / calibration / test (clean, per-seed) ---
     n_spots = adata_st.n_obs
@@ -160,7 +160,7 @@ def run_seed_pipeline(adata_sc, adata_st, seed, fractions, epochs):
     # --- Train ONE DestVI model, only on the clean training split ---
     scvi.model.DestVI.setup_anndata(adata_train)
     st_model = scvi.model.DestVI.from_rna_model(adata_train, sc_model)
-    st_model.train(max_epochs=epochs, accelerator='cpu')
+    st_model.train(max_epochs=epochs, accelerator='cpu', early_stopping=True, train_size=0.9)
 
     # --- Fit calibration (Temperature Scaling, Isotonic Regression) ONCE,
     #     on the clean held-out calibration split. Never re-fit per fraction. ---
@@ -210,7 +210,7 @@ def main():
         sc.pp.subsample(adata_sc, n_obs=min(2000, adata_sc.n_obs), random_state=0)
     else:
         seeds = [42, 123, 2026, 777, 999, 1001, 2002, 3003, 4004, 5005]
-        epochs = 25
+        epochs = 200
 
     # 1.0 = clean baseline (replaces the old separately-computed "ID ECE"; it now
     # goes through the exact same held-out-split / frozen-model / frozen-calibration
