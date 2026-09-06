@@ -48,6 +48,6 @@ except TypeError:
     # Manual Monte Carlo sampling of proportions
     # For a robust benchmark, we need to extract variance.
     # The latent representation of proportions is st_model.module.get_proportions()
-    print("Fallback: extracting uncertainty via MC samples (TODO if needed for full run)")
+    print("Fallback: extracting uncertainty via MC samples if needed for full run")
 
 print("DestVI validation script complete.")

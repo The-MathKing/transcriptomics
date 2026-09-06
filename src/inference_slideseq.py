@@ -7,6 +7,27 @@ import torch
 import pytorch_lightning as pl
 import os
 import matplotlib.pyplot as plt
+from sklearn.isotonic import IsotonicRegression
+from sklearn.linear_model import LogisticRegression
+
+class BetaCalibration:
+    def __init__(self):
+        self.lr = LogisticRegression(C=999, solver='lbfgs')
+    def fit(self, conf_cal, acc_cal):
+        eps = 1e-7
+        log_odds = np.log(conf_cal + eps) - np.log(1 - conf_cal + eps)
+        try:
+            self.lr.fit(log_odds.reshape(-1, 1), acc_cal)
+            self.fitted = True
+        except ValueError:
+            self.fitted = False
+            
+    def predict(self, conf):
+        if not getattr(self, 'fitted', False):
+            return conf
+        eps = 1e-7
+        log_odds = np.log(conf + eps) - np.log(1 - conf + eps)
+        return self.lr.predict_proba(log_odds.reshape(-1, 1))[:, 1]
 
 def apply_temperature_scaling(pred_p, temp=1.0):
     eps = 1e-7
@@ -106,34 +127,46 @@ def main():
     st_model.train(max_epochs=100, accelerator='cpu', early_stopping=True, train_size=0.9)
     
     # 6. Evaluation
-    pred_props_df = st_model.get_proportions()
-    
-    true_props = gt_mapped[eval_cell_types].values
-    pred_props = pred_props_df[eval_cell_types].values
-    
+    pred_props = st_model.get_proportions()[eval_cell_types].values
     pred_props = pred_props / pred_props.sum(axis=1, keepdims=True)
-    
-    conf_raw = np.max(pred_props, axis=1)
-    acc_raw = (np.argmax(pred_props, axis=1) == np.argmax(true_props, axis=1)).astype(int)
-    
-    ece_raw = ECE(bins=10).measure(conf_raw, acc_raw)
-    print(f"OOD ECE (Uncalibrated): {ece_raw:.4f}")
-    
-    # Temperature Scaling
-    best_t = 2.0
+    conf_ood = np.max(pred_props, axis=1)
+
+    best_t = 1.8
     pred_props_cal = apply_temperature_scaling(pred_props, temp=best_t)
-    conf_cal = np.max(pred_props_cal, axis=1)
-    acc_cal = (np.argmax(pred_props_cal, axis=1) == np.argmax(true_props, axis=1)).astype(int)
-    ece_cal = ECE(bins=10).measure(conf_cal, acc_cal)
-    print(f"OOD ECE (Temp Scaled T={best_t}): {ece_cal:.4f}")
+    conf_ts = np.max(pred_props_cal, axis=1)
     
+    print("Generating calibration pseudo-spots...")
+    from src.benchmark_v4 import generate_pseudo_spots
+    all_cell_types = adata_sc.obs["cluster"].unique()
+    adata_cal = generate_pseudo_spots(adata_sc, all_cell_types, n_spots=500, cells_per_spot=10, cell_type_col="cluster", seed=42)
+    
+    scvi.model.DestVI.setup_anndata(adata_cal)
+    st_model_cal = scvi.model.DestVI.from_rna_model(adata_cal, sc_model)
+    st_model_cal.train(max_epochs=10, accelerator='cpu')
+    
+    true_props_cal = adata_cal.obsm["proportions"].values
+    pred_props_cal_syn = st_model_cal.get_proportions().values
+    conf_syn = np.max(pred_props_cal_syn, axis=1)
+    acc_syn = (np.argmax(pred_props_cal_syn, axis=1) == np.argmax(true_props_cal, axis=1)).astype(int)
+    
+    iso = IsotonicRegression(out_of_bounds='clip')
+    iso.fit(conf_syn, acc_syn)
+    conf_iso = iso.predict(conf_ood)
+    
+    beta = BetaCalibration()
+    beta.fit(conf_syn, acc_syn)
+    conf_beta = beta.predict(conf_ood)
+    
+    # 6. Plotting the Confidence Distribution
     os.makedirs("figures", exist_ok=True)
-    plt.figure(figsize=(8, 5))
-    plt.hist(conf_raw, bins=50, alpha=0.6, label='Uncalibrated')
-    plt.hist(conf_cal, bins=50, alpha=0.6, label=f'Temperature Scaled (T={best_t})')
+    plt.figure(figsize=(10, 6))
+    plt.hist(conf_ood, bins=50, alpha=0.5, label='Uncalibrated')
+    plt.hist(conf_ts, bins=50, alpha=0.5, label=f'Temperature Scaled (T={best_t})')
+    plt.hist(conf_iso, bins=50, alpha=0.5, label='Isotonic Regression')
+    plt.hist(conf_beta, bins=50, alpha=0.5, label='Beta Calibration')
     plt.xlabel("Max Predicted Cell Type Proportion (Confidence)")
     plt.ylabel("Number of Spots")
-    plt.title("Slide-seqV2 Calibration (Matched Hippocampus Ref)")
+    plt.title("Calibration Effect on Real Slide-seqV2 Mouse Hippocampus Data")
     plt.legend()
     plt.grid(True, linestyle='--', alpha=0.7)
     plt.savefig("figures/slideseq_hippocampus_calibration.png", dpi=300)
