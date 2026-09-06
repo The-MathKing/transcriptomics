@@ -25,11 +25,11 @@ def main():
         ece_ood_mean.append(np.mean(data['ece_ood']))
         ece_ood_std.append(np.std(data['ece_ood']) / np.sqrt(n_splits))
         
-        c_ts = [fold['ece_temp_mean'] for fold in data['boot_shifted']]
+        c_ts = [fold['ece_temp_mean'] for fold in data['boot_clean']]
         ece_temp_mean.append(np.mean(c_ts))
         ece_temp_std.append(np.std(c_ts) / np.sqrt(n_splits))
         
-        c_iso = [fold['ece_iso_mean'] for fold in data['boot_shifted']]
+        c_iso = [fold['ece_iso_mean'] for fold in data['boot_clean']]
         ece_iso_mean.append(np.mean(c_iso))
         ece_iso_std.append(np.std(c_iso) / np.sqrt(n_splits))
         
@@ -51,9 +51,9 @@ def main():
         jitter = np.random.normal(0, 0.01, n_pts)
         
         ax.scatter([frac]*n_pts + jitter, data['ece_ood'], color='#1f77b4', alpha=0.3, s=20)
-        c_ts = [fold['ece_temp_mean'] for fold in data['boot_shifted']]
+        c_ts = [fold['ece_temp_mean'] for fold in data['boot_clean']]
         ax.scatter([frac]*len(c_ts) + jitter, c_ts, color='#ff7f0e', alpha=0.3, s=20)
-        c_iso = [fold['ece_iso_mean'] for fold in data['boot_shifted']]
+        c_iso = [fold['ece_iso_mean'] for fold in data['boot_clean']]
         ax.scatter([frac]*len(c_iso) + jitter, c_iso, color='#2ca02c', alpha=0.3, s=20)
     
     ax.set_xlabel('Capture Efficiency Fraction (1.0 = In-Distribution)')
