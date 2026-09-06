@@ -6,12 +6,14 @@ import os
 np.random.seed(42)
 
 # k=23: fine-grained (sparse marginals)
-conf_k23 = np.random.beta(0.5, 2.0, 1000)
+base_k23 = np.random.beta(0.5, 2.0, 1000)
+conf_k23 = (1/23) + (1 - 1/23) * base_k23
 knots_k23_x = np.sort(np.random.choice(conf_k23, 15, replace=False))
 knots_k23_y = np.sort(np.random.uniform(0, 1, 15))
 
 # k=4: coarse-grained (dense marginals)
-conf_k4 = np.random.beta(2.0, 2.0, 1000)
+base_k4 = np.random.beta(2.0, 2.0, 1000)
+conf_k4 = (1/4) + (1 - 1/4) * base_k4
 knots_k4_x = np.sort(np.random.choice(conf_k4, 50, replace=False))
 knots_k4_y = np.sort(np.random.uniform(0, 1, 50))
 
