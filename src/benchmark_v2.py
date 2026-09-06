@@ -70,6 +70,40 @@ def downsample_counts(adata, fraction):
     return new_adata
 
 
+def generate_pseudo_spots(adata_sc, n_spots=2000, cells_per_spot=10, cell_type_col="cell_subclass", seed=42):
+    import anndata as ad
+    rng = np.random.RandomState(seed)
+    cell_types = adata_sc.obs[cell_type_col].unique()
+    pseudo_counts = np.zeros((n_spots, adata_sc.n_vars))
+    pseudo_props = np.zeros((n_spots, len(cell_types)))
+    
+    type_to_idx = {ct: i for i, ct in enumerate(cell_types)}
+    
+    for i in range(n_spots):
+        sampled_indices = rng.choice(adata_sc.n_obs, size=cells_per_spot, replace=True)
+        sampled_cells = adata_sc[sampled_indices]
+        
+        if hasattr(sampled_cells.X, "toarray"):
+            pseudo_counts[i, :] = sampled_cells.X.sum(axis=0).A1
+        else:
+            pseudo_counts[i, :] = sampled_cells.X.sum(axis=0)
+            
+        types = sampled_cells.obs[cell_type_col].values
+        for ct in types:
+            pseudo_props[i, type_to_idx[ct]] += 1
+            
+    pseudo_props = pseudo_props / cells_per_spot
+    
+    adata_pseudo = ad.AnnData(X=pseudo_counts)
+    adata_pseudo.var_names = adata_sc.var_names
+    adata_pseudo.obs_names = [f"pseudo_{i}" for i in range(n_spots)]
+    
+    sanitized_cell_types = [str(ct).replace("/", "_") for ct in cell_types]
+    prop_df = pd.DataFrame(pseudo_props, index=adata_pseudo.obs_names, columns=sanitized_cell_types)
+    adata_pseudo.obsm["proportions"] = prop_df
+    return adata_pseudo
+
+
 def get_calibration_stats(true_p, pred_p, temp=1.0, iso_reg=None):
     eps = 1e-7
     logits = np.log(pred_p + eps)
@@ -86,14 +120,15 @@ def get_calibration_stats(true_p, pred_p, temp=1.0, iso_reg=None):
         conf = np.clip(conf, 0, 1)
 
     ece = ECE(bins=10).measure(conf, acc)
-    return conf, acc, ece, cal_pred_p
+    brier = float(np.mean((conf - acc) ** 2))
+    return conf, acc, ece, brier, cal_pred_p
 
 
 def optimize_temperature(true_p, pred_p):
     best_t = 1.0
     best_ece = float('inf')
     for t in np.linspace(0.5, 3.0, 50):
-        _, _, ece, _ = get_calibration_stats(true_p, pred_p, temp=t)
+        _, _, ece, _, _ = get_calibration_stats(true_p, pred_p, temp=t)
         if ece < best_ece:
             best_ece = ece
             best_t = t
@@ -125,7 +160,7 @@ def get_ood_proportions(model, adata):
     return props
 
 
-def run_seed_pipeline(adata_sc, adata_st, seed, fractions, epochs):
+def run_seed_pipeline(adata_sc, seed, fractions, epochs):
     scvi.settings.seed = seed
     pl.seed_everything(seed, workers=True)
     torch.manual_seed(seed)
@@ -138,14 +173,27 @@ def run_seed_pipeline(adata_sc, adata_st, seed, fractions, epochs):
             cell_type_col = col
             break
 
-    # --- Train CondSCVI prior on the (unshifted) single-cell reference ---
-    scvi.model.CondSCVI.setup_anndata(adata_sc, labels_key=cell_type_col)
-    sc_model = scvi.model.CondSCVI(adata_sc, weight_obs=False)
+    # --- Split Single-Cell Reference for Independent Pseudo-spot Generation ---
+    n_sc = adata_sc.n_obs
+    rng = np.random.RandomState(seed)
+    perm_sc = rng.permutation(n_sc)
+    n_sc_train = int(0.5 * n_sc)
+    sc_train_idx = perm_sc[:n_sc_train]
+    sc_test_idx = perm_sc[n_sc_train:]
+    
+    adata_sc_train = adata_sc[sc_train_idx].copy()
+    adata_sc_test = adata_sc[sc_test_idx].copy()
+
+    # --- Train CondSCVI prior ONLY on the SC training split ---
+    scvi.model.CondSCVI.setup_anndata(adata_sc_train, labels_key=cell_type_col)
+    sc_model = scvi.model.CondSCVI(adata_sc_train, weight_obs=False)
     sc_model.train(max_epochs=epochs, accelerator='cpu', early_stopping=True, train_size=0.9)
+
+    # --- Generate fresh pseudo-spots ONLY from the SC test split ---
+    adata_st = generate_pseudo_spots(adata_sc_test, n_spots=2000, cells_per_spot=10, cell_type_col=cell_type_col, seed=seed)
 
     # --- Split pseudo-spots into train / calibration / test (clean, per-seed) ---
     n_spots = adata_st.n_obs
-    rng = np.random.RandomState(seed)
     perm = rng.permutation(n_spots)
     n_train = int(0.5 * n_spots)
     n_cal = int(0.25 * n_spots)
@@ -184,15 +232,18 @@ def run_seed_pipeline(adata_sc, adata_st, seed, fractions, epochs):
         true_props_test = adata_test_frac.obsm["proportions"].values
         pred_props_test = get_ood_proportions(st_model, adata_test_frac)
 
-        _, acc_raw, ece_raw, _ = get_calibration_stats(true_props_test, pred_props_test)
-        _, _, ece_temp, _ = get_calibration_stats(true_props_test, pred_props_test, temp=best_t)
-        _, _, ece_iso, _ = get_calibration_stats(true_props_test, pred_props_test, iso_reg=iso)
+        _, acc_raw, ece_raw, brier_raw, _ = get_calibration_stats(true_props_test, pred_props_test)
+        _, _, ece_temp, brier_temp, _ = get_calibration_stats(true_props_test, pred_props_test, temp=best_t)
+        _, _, ece_iso, brier_iso, _ = get_calibration_stats(true_props_test, pred_props_test, iso_reg=iso)
 
         seed_results["fractions"][frac] = {
             "acc": float(np.mean(acc_raw)),
             "ece_ood": ece_raw,
+            "brier_ood": brier_raw,
             "ece_temp": ece_temp,
+            "brier_temp": brier_temp,
             "ece_iso": ece_iso,
+            "brier_iso": brier_iso,
             "best_t": best_t,
         }
 
@@ -202,7 +253,6 @@ def run_seed_pipeline(adata_sc, adata_st, seed, fractions, epochs):
 def main():
     print("Loading data...")
     adata_sc = sc.read_h5ad("data/processed_sc_reference.h5ad")
-    adata_st = sc.read_h5ad("data/processed_pseudospots.h5ad")
 
     if SMOKE_TEST:
         print("*** SMOKE_TEST=1: reduced seeds/epochs/data for a fast sanity check ***")
@@ -221,7 +271,7 @@ def main():
     all_results = []
     for i, seed in enumerate(seeds):
         print(f"--- Running Replicate {i+1}/{len(seeds)} (Seed {seed}) ---")
-        res = run_seed_pipeline(adata_sc, adata_st, seed, fractions, epochs)
+        res = run_seed_pipeline(adata_sc, seed, fractions, epochs)
         all_results.append(res)
 
     final_output = {
@@ -237,25 +287,37 @@ def main():
         final_output[f_str] = {
             "acc": [r["fractions"][frac]["acc"] for r in all_results],
             "ece_ood": [r["fractions"][frac]["ece_ood"] for r in all_results],
+            "brier_ood": [r["fractions"][frac]["brier_ood"] for r in all_results],
             "ece_temp": [r["fractions"][frac]["ece_temp"] for r in all_results],
+            "brier_temp": [r["fractions"][frac]["brier_temp"] for r in all_results],
             "ece_iso": [r["fractions"][frac]["ece_iso"] for r in all_results],
+            "brier_iso": [r["fractions"][frac]["brier_iso"] for r in all_results],
         }
         mean_acc = float(np.mean(final_output[f_str]["acc"]))
         std_acc = float(np.std(final_output[f_str]["acc"]))
         mean_ood = float(np.mean(final_output[f_str]["ece_ood"]))
         std_ood = float(np.std(final_output[f_str]["ece_ood"]))
+        mean_brier_ood = float(np.mean(final_output[f_str]["brier_ood"]))
+        std_brier_ood = float(np.std(final_output[f_str]["brier_ood"]))
         mean_temp = float(np.mean(final_output[f_str]["ece_temp"]))
         std_temp = float(np.std(final_output[f_str]["ece_temp"]))
+        mean_brier_temp = float(np.mean(final_output[f_str]["brier_temp"]))
+        std_brier_temp = float(np.std(final_output[f_str]["brier_temp"]))
         mean_iso = float(np.mean(final_output[f_str]["ece_iso"]))
         std_iso = float(np.std(final_output[f_str]["ece_iso"]))
+        mean_brier_iso = float(np.mean(final_output[f_str]["brier_iso"]))
+        std_brier_iso = float(np.std(final_output[f_str]["brier_iso"]))
 
         t_stat_iso, p_val_iso = ttest_rel(final_output[f_str]["ece_temp"], final_output[f_str]["ece_iso"])
 
         final_output[f_str].update({
             "mean_acc": mean_acc, "std_acc": std_acc,
             "mean_ood": mean_ood, "std_ood": std_ood,
+            "mean_brier_ood": mean_brier_ood, "std_brier_ood": std_brier_ood,
             "mean_temp": mean_temp, "std_temp": std_temp,
+            "mean_brier_temp": mean_brier_temp, "std_brier_temp": std_brier_temp,
             "mean_iso": mean_iso, "std_iso": std_iso,
+            "mean_brier_iso": mean_brier_iso, "std_brier_iso": std_brier_iso,
             "ttest_temp_vs_iso": {"t_stat": float(t_stat_iso), "p_val": float(p_val_iso)},
         })
 
@@ -265,9 +327,9 @@ def main():
 
         print(f"\nFraction {frac}:")
         print(f"  Top-1 Accuracy:   {mean_acc:.3f} +/- {std_acc:.3f}")
-        print(f"  Uncalibrated ECE: {mean_ood:.3f} +/- {std_ood:.3f}")
-        print(f"  Temp Scaling ECE: {mean_temp:.3f} +/- {std_temp:.3f}")
-        print(f"  Isotonic ECE: {mean_iso:.3f} +/- {std_iso:.3f} (p={p_val_iso:.4e} vs Temp)")
+        print(f"  Uncalibrated ECE: {mean_ood:.3f} +/- {std_ood:.3f} (Brier: {mean_brier_ood:.3f} +/- {std_brier_ood:.3f})")
+        print(f"  Temp Scaling ECE: {mean_temp:.3f} +/- {std_temp:.3f} (Brier: {mean_brier_temp:.3f} +/- {std_brier_temp:.3f})")
+        print(f"  Isotonic ECE: {mean_iso:.3f} +/- {std_iso:.3f} (Brier: {mean_brier_iso:.3f} +/- {std_brier_iso:.3f}) (p={p_val_iso:.4e} vs Temp ECE)")
 
     os.makedirs("figures", exist_ok=True)
     out_name = "results_smoketest.json" if SMOKE_TEST else "results.json"

@@ -1,0 +1,10 @@
+scanpy
+scvi-tools
+numpy
+pandas
+matplotlib
+netcal
+scikit-learn
+scipy
+torch
+pytorch-lightning

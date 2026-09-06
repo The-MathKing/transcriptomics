@@ -1,0 +1,14 @@
+Metadata-Version: 2.4
+Name: spatial_calibration_benchmark
+Version: 1.0.0
+Summary: Benchmarking confidence calibration of spatial transcriptomics deconvolution models
+Requires-Dist: scanpy
+Requires-Dist: scvi-tools
+Requires-Dist: numpy
+Requires-Dist: pandas
+Requires-Dist: matplotlib
+Requires-Dist: netcal
+Requires-Dist: scikit-learn
+Requires-Dist: scipy
+Requires-Dist: torch
+Requires-Dist: pytorch-lightning
