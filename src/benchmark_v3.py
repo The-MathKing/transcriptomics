@@ -93,7 +93,8 @@ def get_calibration_stats(true_p, pred_p, temp=1.0, iso_reg=None):
     cal_pred_p = exp_logits / np.sum(exp_logits, axis=1, keepdims=True)
 
     conf = np.max(cal_pred_p, axis=1)
-    acc = (np.argmax(cal_pred_p, axis=1) == np.argmax(true_p, axis=1)).astype(int)
+    pred_max_idx = np.argmax(cal_pred_p, axis=1)
+    acc = (true_p[np.arange(len(true_p)), pred_max_idx] == np.max(true_p, axis=1)).astype(int)
 
     if iso_reg is not None:
         conf = iso_reg.predict(conf)
@@ -125,7 +126,8 @@ def get_ood_proportions(model, adata):
     old_adata = model.adata
     model.adata = adata
     try:
-        props = model.get_proportions().values
+        props_df = model.get_proportions()
+        props = props_df[adata.obsm['proportions'].columns].values
     finally:
         model.adata = old_adata
     return props

@@ -14,12 +14,14 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from netcal.metrics import ECE
+from inference_visium_cortex import BetaCalibration
 from sklearn.isotonic import IsotonicRegression
 from scipy.stats import ttest_rel
 import json
 import torch
 import pytorch_lightning as pl
 from sklearn.model_selection import KFold
+from sklearn.metrics import log_loss
 
 SMOKE_TEST = os.environ.get("SMOKE_TEST", "0") == "1"
 
@@ -88,12 +90,12 @@ def get_calibration_stats(true_p, pred_p, temp=1.0, iso_reg=None, beta_reg=None)
     eps = 1e-7
     logits = np.log(pred_p + eps)
     scaled_logits = logits / temp
-
     exp_logits = np.exp(scaled_logits - np.max(scaled_logits, axis=1, keepdims=True))
     cal_pred_p = exp_logits / np.sum(exp_logits, axis=1, keepdims=True)
 
     conf = np.max(cal_pred_p, axis=1)
-    acc = (np.argmax(cal_pred_p, axis=1) == np.argmax(true_p, axis=1)).astype(int)
+    pred_max_idx = np.argmax(cal_pred_p, axis=1)
+    acc = (true_p[np.arange(len(true_p)), pred_max_idx] == np.max(true_p, axis=1)).astype(int)
 
     if iso_reg is not None:
         conf = iso_reg.predict(conf)
@@ -123,13 +125,19 @@ def get_calibration_stats(true_p, pred_p, temp=1.0, iso_reg=None, beta_reg=None)
 
 def optimize_temperature(true_p, pred_p):
     best_t = 1.0
-    best_ece = float('inf')
-    for t in np.linspace(0.5, 3.0, 50):
-        _, _, ece, _, _, _, _, _, _ = get_calibration_stats(true_p, pred_p, temp=t)
-        if ece < best_ece:
-            best_ece = ece
+    best_nll = float('inf')
+    eps = 1e-7
+    for t in np.linspace(0.05, 50.0, 500):
+        logits = np.log(pred_p + eps)
+        scaled_logits = logits / t
+        exp_logits = np.exp(scaled_logits - np.max(scaled_logits, axis=1, keepdims=True))
+        cal_pred_p = exp_logits / np.sum(exp_logits, axis=1, keepdims=True)
+        # NLL is cross entropy on true proportions
+        nll = -np.mean(np.sum(true_p * np.log(cal_pred_p + eps), axis=1))
+        if nll < best_nll:
+            best_nll = nll
             best_t = t
-    return best_t, best_ece
+    return best_t, best_nll
 
 
 def evaluate_bootstrapped_calibrators(true_props_cal, pred_props_cal, true_props_test, pred_props_test, n_bootstraps=100):
@@ -152,7 +160,8 @@ def evaluate_bootstrapped_calibrators(true_props_cal, pred_props_cal, true_props
         
         # Iso
         conf_cal = np.max(p_cal, axis=1)
-        acc_cal = (np.argmax(p_cal, axis=1) == np.argmax(t_cal, axis=1)).astype(int)
+        pred_max_cal = np.argmax(p_cal, axis=1)
+        acc_cal = (t_cal[np.arange(len(t_cal)), pred_max_cal] == np.max(t_cal, axis=1)).astype(int)
         iso = IsotonicRegression(out_of_bounds='clip')
         iso.fit(conf_cal, acc_cal)
         _, _, ece_i, ece_i_adapt, brier_i, nll_i, _, _, _ = get_calibration_stats(true_props_test, pred_props_test, iso_reg=iso)
@@ -192,7 +201,8 @@ def get_ood_proportions(model, adata):
     old_adata = model.adata
     model.adata = adata
     try:
-        props = model.get_proportions().values
+        props_df = model.get_proportions()
+        props = props_df[adata.obsm["proportions"].columns].values
     finally:
         model.adata = old_adata
     return props
@@ -253,7 +263,8 @@ def run_kfold_pipeline(adata_sc, fractions, noise_levels, epochs, n_splits=10):
         
         best_t, _ = optimize_temperature(true_props_cal, pred_props_cal)
         conf_cal = np.max(pred_props_cal, axis=1)
-        acc_cal = (np.argmax(pred_props_cal, axis=1) == np.argmax(true_props_cal, axis=1)).astype(int)
+        pred_max_cal = np.argmax(pred_props_cal, axis=1)
+        acc_cal = (true_props_cal[np.arange(len(true_props_cal)), pred_max_cal] == np.max(true_props_cal, axis=1)).astype(int)
         iso = IsotonicRegression(out_of_bounds='clip')
         iso.fit(conf_cal, acc_cal)
         
@@ -273,7 +284,8 @@ def run_kfold_pipeline(adata_sc, fractions, noise_levels, epochs, n_splits=10):
             # Fit shifted calibrators
             best_t_shifted, _ = optimize_temperature(true_props_cal_frac, pred_props_cal_frac)
             conf_cal_frac = np.max(pred_props_cal_frac, axis=1)
-            acc_cal_frac = (np.argmax(pred_props_cal_frac, axis=1) == np.argmax(true_props_cal_frac, axis=1)).astype(int)
+            pred_max_cal_frac = np.argmax(pred_props_cal_frac, axis=1)
+            acc_cal_frac = (true_props_cal_frac[np.arange(len(true_props_cal_frac)), pred_max_cal_frac] == np.max(true_props_cal_frac, axis=1)).astype(int)
             iso_shifted = IsotonicRegression(out_of_bounds='clip')
             iso_shifted.fit(conf_cal_frac, acc_cal_frac)
 

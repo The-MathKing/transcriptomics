@@ -15,7 +15,7 @@ from cell2location.models import RegressionModel, Cell2location
 import warnings
 warnings.filterwarnings('ignore')
 
-from src.benchmark_v4 import (
+from benchmark_v4 import (
     generate_pseudo_spots, 
     downsample_counts, 
     apply_noise_shift, 
@@ -37,7 +37,7 @@ def get_ood_proportions_c2l(adata, inf_dict, epochs=200):
     df = adata.obsm[abundance_key]
     df.columns = [str(c).split('sf_')[-1].replace('/', '_') for c in df.columns]
     
-    props = df[inf_dict.columns].values
+    props = df[adata.obsm['proportions'].columns].values
     props = props / (np.sum(props, axis=1, keepdims=True) + 1e-9)
     return props
 
@@ -101,7 +101,7 @@ def run_kfold_c2l(adata_sc, fractions, noise_levels, epochs, n_splits=5):
             true_props_cal_frac = adata_cal_frac.obsm["proportions"][inf_dict.columns].values
             pred_props_cal_frac = get_ood_proportions_c2l(adata_cal_frac, inf_dict, epochs=epochs)
             
-            _, acc_raw, ece_raw, ece_adapt_raw, brier_raw, comp_rmse_raw, hc_raw, _ = get_calibration_stats(true_props_test, pred_props_test)
+            _, acc_raw, ece_raw, ece_adapt_raw, brier_raw, nll_raw, comp_rmse_raw, hc_raw, _ = get_calibration_stats(true_props_test, pred_props_test)
             boot_clean = evaluate_bootstrapped_calibrators(true_props_cal, pred_props_cal, true_props_test, pred_props_test, n_bootstraps=500)
             boot_shifted = evaluate_bootstrapped_calibrators(true_props_cal_frac, pred_props_cal_frac, true_props_test, pred_props_test, n_bootstraps=500)
 
@@ -125,7 +125,7 @@ def run_kfold_c2l(adata_sc, fractions, noise_levels, epochs, n_splits=5):
             true_props_cal_noise = adata_cal_noise.obsm["proportions"][inf_dict.columns].values
             pred_props_cal_noise = get_ood_proportions_c2l(adata_cal_noise, inf_dict, epochs=epochs)
             
-            _, acc_raw, ece_raw, ece_adapt_raw, brier_raw, comp_rmse_raw, hc_raw, _ = get_calibration_stats(true_props_test, pred_props_test)
+            _, acc_raw, ece_raw, ece_adapt_raw, brier_raw, nll_raw, comp_rmse_raw, hc_raw, _ = get_calibration_stats(true_props_test, pred_props_test)
             boot_clean = evaluate_bootstrapped_calibrators(true_props_cal, pred_props_cal, true_props_test, pred_props_test, n_bootstraps=500)
             boot_shifted = evaluate_bootstrapped_calibrators(true_props_cal_noise, pred_props_cal_noise, true_props_test, pred_props_test, n_bootstraps=500)
 

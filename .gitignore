@@ -1,14 +1,24 @@
 .venv/
-data/
-models/
-__pycache__/
-*.pyc
-.ipynb_checkpoints/
-paper.tex
-paper.pdf
-ref.bib
-implementation_plan.md
-proceedings_upgrade_plan.md
-referee_review.md
-task.md
-findings_upgrade_plan.md
+ data/
+ models/
+ __pycache__/
+ *.pyc
+ .ipynb_checkpoints/
+ paper.tex
+ paper.pdf
+ ref.bib
+ implementation_plan.md
+ proceedings_upgrade_plan.md
+ referee_review.md
+ task.md
+ findings_upgrade_plan.md
+ 
+ # Exclude large data and archive files not needed for reviewers
+ destvi_repro_zenodo.zip
+ *.h5ad
+ zenodo_data/
+ *.zip
+ 
+ # Exclude all manuscript and PDF files from repository
+ *.tex
+ *.pdf

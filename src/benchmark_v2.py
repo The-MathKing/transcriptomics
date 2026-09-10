@@ -52,6 +52,13 @@ import json
 import torch
 import pytorch_lightning as pl
 
+# Configure scvi data loader workers for faster I/O
+scvi.settings.num_workers = 12  # faster I/O on multi‑core machines
+
+# Enable cuDNN auto‑tuner (helps on CUDA GPUs)
+import torch
+torch.backends.cudnn.benchmark = True
+
 
 def downsample_counts(adata, fraction):
     # Simulate lower capture rate via binomial dropout.
@@ -113,7 +120,8 @@ def get_calibration_stats(true_p, pred_p, temp=1.0, iso_reg=None):
     cal_pred_p = exp_logits / np.sum(exp_logits, axis=1, keepdims=True)
 
     conf = np.max(cal_pred_p, axis=1)
-    acc = (np.argmax(cal_pred_p, axis=1) == np.argmax(true_p, axis=1)).astype(int)
+    pred_max_idx = np.argmax(cal_pred_p, axis=1)
+    acc = (true_p[np.arange(len(true_p)), pred_max_idx] == np.max(true_p, axis=1)).astype(int)
 
     if iso_reg is not None:
         conf = iso_reg.predict(conf)
@@ -154,45 +162,63 @@ def get_ood_proportions(model, adata):
     old_adata = model.adata
     model.adata = adata
     try:
-        props = model.get_proportions().values
+        props_df = model.get_proportions()
+        # Reindex to ensure all expected cell type columns are present
+        props_df = props_df.reindex(columns=adata.obsm['proportions'].columns, fill_value=0)
+        props = props_df[adata.obsm['proportions'].columns].values
     finally:
         model.adata = old_adata
     return props
 
 
 def run_seed_pipeline(adata_sc, seed, fractions, epochs):
+    # Set random seeds for reproducibility
     scvi.settings.seed = seed
     pl.seed_everything(seed, workers=True)
     torch.manual_seed(seed)
     torch.use_deterministic_algorithms(True, warn_only=True)
     np.random.seed(seed)
 
+    # Choose accelerator based on available hardware – use GPU only if CUDA is present.
+    if torch.cuda.is_available():
+        accelerator = 'gpu'          # NVIDIA/AMD CUDA GPU
+    elif torch.backends.mps.is_available():
+        # MPS (Apple Silicon) is not fully supported by scvi; fall back to CPU.
+        accelerator = 'cpu'
+    else:
+        accelerator = 'cpu'
+
+    # Identify the cell type column in the AnnData
     cell_type_col = None
     for col in ["cell_subclass", "cluster", "cell_type", "labels"]:
         if col in adata_sc.obs.columns:
             cell_type_col = col
             break
 
-    # --- Split Single-Cell Reference for Independent Pseudo-spot Generation ---
+    # --- Split single‑cell reference for independent pseudo‑spot generation ---
     n_sc = adata_sc.n_obs
     rng = np.random.RandomState(seed)
     perm_sc = rng.permutation(n_sc)
     n_sc_train = int(0.5 * n_sc)
     sc_train_idx = perm_sc[:n_sc_train]
     sc_test_idx = perm_sc[n_sc_train:]
-    
+
     adata_sc_train = adata_sc[sc_train_idx].copy()
     adata_sc_test = adata_sc[sc_test_idx].copy()
 
     # --- Train CondSCVI prior ONLY on the SC training split ---
     scvi.model.CondSCVI.setup_anndata(adata_sc_train, labels_key=cell_type_col)
     sc_model = scvi.model.CondSCVI(adata_sc_train, weight_obs=False)
-    sc_model.train(max_epochs=epochs, accelerator='cpu', early_stopping=True, train_size=0.9)
+    # Set prior for the model
+    sc_model.init_params_["kwargs"] = {"module_kwargs": {"prior": "lognorm"}}
+    # Train CondSCVI model using the chosen accelerator
+    sc_model.train(max_epochs=epochs, accelerator=accelerator, precision=16, early_stopping=True, train_size=0.9)
+    sc_model.is_trained_ = True
 
-    # --- Generate fresh pseudo-spots ONLY from the SC test split ---
+    # --- Generate fresh pseudo‑spots ONLY from the SC test split ---
     adata_st = generate_pseudo_spots(adata_sc_test, n_spots=2000, cells_per_spot=10, cell_type_col=cell_type_col, seed=seed)
 
-    # --- Split pseudo-spots into train / calibration / test (clean, per-seed) ---
+    # --- Split pseudo‑spots into train / calibration / test (clean, per‑seed) ---
     n_spots = adata_st.n_obs
     perm = rng.permutation(n_spots)
     n_train = int(0.5 * n_spots)
@@ -205,16 +231,14 @@ def run_seed_pipeline(adata_sc, seed, fractions, epochs):
     adata_cal = adata_st[cal_idx].copy()
     adata_test_base = adata_st[test_idx].copy()
 
-    # --- Train ONE DestVI model, only on the clean training split ---
-    scvi.model.DestVI.setup_anndata(adata_train)
+    # Initialize DestVI using the trained CondSCVI model
     st_model = scvi.model.DestVI.from_rna_model(adata_train, sc_model)
-    st_model.train(max_epochs=epochs, accelerator='cpu', early_stopping=True, train_size=0.9)
+    # Train DestVI model using the chosen accelerator
+    st_model.train(max_epochs=epochs, accelerator=accelerator, precision=16, early_stopping=True, train_size=0.9)
 
-    # --- Fit calibration (Temperature Scaling, Isotonic Regression) ONCE,
-    #     on the clean held-out calibration split. Never re-fit per fraction. ---
+    # --- Fit calibration (Temperature Scaling, Isotonic Regression) ONCE on the clean calibration split ---
     true_props_cal = adata_cal.obsm["proportions"].values
     pred_props_cal = get_ood_proportions(st_model, adata_cal)
-
     best_t, _ = optimize_temperature(true_props_cal, pred_props_cal)
 
     conf_cal = np.max(pred_props_cal, axis=1)
@@ -226,16 +250,13 @@ def run_seed_pipeline(adata_sc, seed, fractions, epochs):
     seed_results = {"fractions": {}}
     for frac in fractions:
         print(f"    Evaluating fraction {frac}...")
-        np.random.seed(seed)  # same reseeding convention as before, for determinism
+        np.random.seed(seed)
         adata_test_frac = downsample_counts(adata_test_base, fraction=frac)
-
         true_props_test = adata_test_frac.obsm["proportions"].values
         pred_props_test = get_ood_proportions(st_model, adata_test_frac)
-
         _, acc_raw, ece_raw, brier_raw, _ = get_calibration_stats(true_props_test, pred_props_test)
         _, _, ece_temp, brier_temp, _ = get_calibration_stats(true_props_test, pred_props_test, temp=best_t)
         _, _, ece_iso, brier_iso, _ = get_calibration_stats(true_props_test, pred_props_test, iso_reg=iso)
-
         seed_results["fractions"][frac] = {
             "acc": float(np.mean(acc_raw)),
             "ece_ood": ece_raw,
@@ -246,7 +267,6 @@ def run_seed_pipeline(adata_sc, seed, fractions, epochs):
             "brier_iso": brier_iso,
             "best_t": best_t,
         }
-
     return seed_results
 
 

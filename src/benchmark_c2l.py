@@ -37,7 +37,7 @@ def get_ood_proportions_c2l(adata, inf_dict, epochs=200):
     df = adata.obsm[abundance_key]
     df.columns = [str(c).split('sf_')[-1].replace('/', '_') for c in df.columns]
     
-    props = df[inf_dict.columns].values
+    props = df[adata.obsm['proportions'].columns].values
     props = props / (np.sum(props, axis=1, keepdims=True) + 1e-9)
     return props
 

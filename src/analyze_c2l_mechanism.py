@@ -61,15 +61,15 @@ def main():
     conf_shift = np.max(p_shift, axis=1)
     acc_shift = (np.argmax(p_shift, axis=1) == np.argmax(t_clean, axis=1)).astype(int)
     
-    # AUROC
+    # AUROC for correctness detector
     try:
         auroc_clean = roc_auc_score(acc_clean, conf_clean)
         auroc_shift = roc_auc_score(acc_shift, conf_shift)
     except:
         auroc_clean, auroc_shift = np.nan, np.nan
         
-    print(f"AUROC Clean: {auroc_clean:.4f}")
-    print(f"AUROC Shift: {auroc_shift:.4f}")
+    print(f"Confidence AUROC (detector of correctness) Clean: {auroc_clean:.4f}")
+    print(f"Confidence AUROC (detector of correctness) Shift: {auroc_shift:.4f}")
     
     # Fit Isotonic
     iso = IsotonicRegression(out_of_bounds='clip')
@@ -85,7 +85,8 @@ def main():
     plt.title("cell2location Isotonic Fit")
     
     plt.subplot(1, 2, 2)
-    t_vals = np.linspace(0.5, 3.0, 50)
+    t_vals = np.linspace(0.05, 50.0, 100)
+    nlls = []
     eces = []
     for temp in t_vals:
         eps = 1e-7
@@ -93,16 +94,20 @@ def main():
         scaled = logits / temp
         exp_l = np.exp(scaled - np.max(scaled, axis=1, keepdims=True))
         cal_p = exp_l / np.sum(exp_l, axis=1, keepdims=True)
+        # NLL
+        nll = -np.mean(np.sum(t_cal * np.log(cal_p + eps), axis=1))
+        nlls.append(nll)
         eces.append(ECE(bins=10).measure(np.max(cal_p, axis=1), acc_cal))
         
-    plt.plot(t_vals, eces, 'r-')
+    plt.plot(t_vals, nlls, 'r-', label="NLL")
     plt.xlabel("Temperature T")
-    plt.ylabel("ECE (Calibration Split)")
-    plt.title("Temperature Scaling Search")
+    plt.ylabel("NLL (Calibration Split)")
+    plt.title(f"TS NLL Optimization (Best T={t_vals[np.argmin(nlls)]:.2f})")
+    plt.legend()
     
     import os
     os.makedirs("figures", exist_ok=True)
-    plt.savefig("figures/c2l_mechanism.png")
+    plt.savefig("figures/c2l_mechanism.png", bbox_inches='tight')
     print("Saved figures/c2l_mechanism.png")
 
 if __name__ == "__main__":
