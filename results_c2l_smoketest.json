@@ -1,0 +1,279 @@
+{
+    "fractions": [
+        1.0,
+        0.6,
+        0.2
+    ],
+    "noise_levels": [
+        0.0,
+        1.0,
+        2.0
+    ],
+    "epochs": 3,
+    "smoke_test": true,
+    "n_splits": 2,
+    "1.0": {
+        "ece_ood": [
+            0.008649166822433468
+        ],
+        "brier_ood": [
+            0.056469309047076255
+        ],
+        "boot_clean": [
+            {
+                "ece_temp_mean": 0.01880804533173133,
+                "ece_temp_std": 0.006395935024367935,
+                "ece_temp_adapt_mean": 0.04305963408475695,
+                "ece_temp_adapt_std": 0.0027565491642459485,
+                "ece_iso_mean": 0.07171804350236431,
+                "ece_iso_std": 0.03481699608038127,
+                "brier_iso_mean": 0.06615005700434015,
+                "brier_iso_std": 0.009494119285705437,
+                "nll_iso_mean": 0.5319695149064064,
+                "ece_iso_adapt_mean": NaN,
+                "ece_beta_mean": NaN,
+                "brier_beta_mean": NaN,
+                "nll_beta_mean": NaN,
+                "ece_beta_adapt_mean": NaN
+            }
+        ],
+        "boot_shifted": [
+            {
+                "ece_temp_mean": 0.019488897140782165,
+                "ece_temp_std": 0.005769070679606698,
+                "ece_temp_adapt_mean": 0.04274473906815994,
+                "ece_temp_adapt_std": 0.002452091712396783,
+                "ece_iso_mean": 0.06022452281061793,
+                "ece_iso_std": 0.035581638835697364,
+                "brier_iso_mean": 0.06366001483189913,
+                "brier_iso_std": 0.00874253590766819,
+                "nll_iso_mean": 0.28236495816707613,
+                "ece_iso_adapt_mean": NaN,
+                "ece_beta_mean": NaN,
+                "brier_beta_mean": NaN,
+                "nll_beta_mean": NaN,
+                "ece_beta_adapt_mean": NaN
+            }
+        ]
+    },
+    "0.6": {
+        "ece_ood": [
+            0.04859087329357863
+        ],
+        "brier_ood": [
+            0.09234040110411103
+        ],
+        "boot_clean": [
+            {
+                "ece_temp_mean": 0.03253803163673191,
+                "ece_temp_std": 0.00623444123271959,
+                "ece_temp_adapt_mean": 0.09942624463577067,
+                "ece_temp_adapt_std": 0.00022804023152417198,
+                "ece_iso_mean": 0.0608243661542656,
+                "ece_iso_std": 0.027895771421245538,
+                "brier_iso_mean": 0.09542021367327928,
+                "brier_iso_std": 0.009250553755318606,
+                "nll_iso_mean": 0.4943424363136292,
+                "ece_iso_adapt_mean": NaN,
+                "ece_beta_mean": NaN,
+                "brier_beta_mean": NaN,
+                "nll_beta_mean": NaN,
+                "ece_beta_adapt_mean": NaN
+            }
+        ],
+        "boot_shifted": [
+            {
+                "ece_temp_mean": 0.042005633060520436,
+                "ece_temp_std": 0.009562619979840571,
+                "ece_temp_adapt_mean": 0.09978925648885797,
+                "ece_temp_adapt_std": 0.00026721179415034157,
+                "ece_iso_mean": 0.05421000010792865,
+                "ece_iso_std": 0.02339472188205904,
+                "brier_iso_mean": 0.09188654600469491,
+                "brier_iso_std": 0.0034510350247643554,
+                "nll_iso_mean": 0.5076177346110344,
+                "ece_iso_adapt_mean": NaN,
+                "ece_beta_mean": NaN,
+                "brier_beta_mean": NaN,
+                "nll_beta_mean": NaN,
+                "ece_beta_adapt_mean": NaN
+            }
+        ]
+    },
+    "0.2": {
+        "ece_ood": [
+            0.04855950180441142
+        ],
+        "brier_ood": [
+            0.09232756319221487
+        ],
+        "boot_clean": [
+            {
+                "ece_temp_mean": 0.021195364645559107,
+                "ece_temp_std": 0.01163520109772859,
+                "ece_temp_adapt_mean": 0.09816089348914081,
+                "ece_temp_adapt_std": 0.002800527383323982,
+                "ece_iso_mean": 0.06400104439978546,
+                "ece_iso_std": 0.03234377658372477,
+                "brier_iso_mean": 0.09406678506265168,
+                "brier_iso_std": 0.007745946484584237,
+                "nll_iso_mean": 0.6004818444252014,
+                "ece_iso_adapt_mean": NaN,
+                "ece_beta_mean": NaN,
+                "brier_beta_mean": NaN,
+                "nll_beta_mean": NaN,
+                "ece_beta_adapt_mean": NaN
+            }
+        ],
+        "boot_shifted": [
+            {
+                "ece_temp_mean": 0.017083713833147045,
+                "ece_temp_std": 0.006698795779817449,
+                "ece_temp_adapt_mean": 0.09784334131520021,
+                "ece_temp_adapt_std": 0.002242277729101951,
+                "ece_iso_mean": 0.08200643866273517,
+                "ece_iso_std": 0.0466088447367489,
+                "brier_iso_mean": 0.09942544048559314,
+                "brier_iso_std": 0.011152967768229664,
+                "nll_iso_mean": 0.4054821032881737,
+                "ece_iso_adapt_mean": NaN,
+                "ece_beta_mean": NaN,
+                "brier_beta_mean": NaN,
+                "nll_beta_mean": NaN,
+                "ece_beta_adapt_mean": NaN
+            }
+        ]
+    },
+    "noise_0.0": {
+        "ece_ood": [
+            0.05854427643120289
+        ],
+        "brier_ood": [
+            0.10128120139686007
+        ],
+        "boot_clean": [
+            {
+                "ece_temp_mean": 0.03093599490669314,
+                "ece_temp_std": 0.01188890711611357,
+                "ece_temp_adapt_mean": 0.07779368858854133,
+                "ece_temp_adapt_std": 0.005022056279946769,
+                "ece_iso_mean": 0.08923552438003245,
+                "ece_iso_std": 0.04092117987915379,
+                "brier_iso_mean": 0.10613741628653289,
+                "brier_iso_std": 0.008781761659824288,
+                "nll_iso_mean": 0.8780356740951538,
+                "ece_iso_adapt_mean": NaN,
+                "ece_beta_mean": NaN,
+                "brier_beta_mean": NaN,
+                "nll_beta_mean": NaN,
+                "ece_beta_adapt_mean": NaN
+            }
+        ],
+        "boot_shifted": [
+            {
+                "ece_temp_mean": 0.03518087644322525,
+                "ece_temp_std": 0.014152322918760164,
+                "ece_temp_adapt_mean": 0.07958702936779795,
+                "ece_temp_adapt_std": 0.0059663123669515036,
+                "ece_iso_mean": 0.06156439934261725,
+                "ece_iso_std": 0.021701392568374153,
+                "brier_iso_mean": 0.09297261267338676,
+                "brier_iso_std": 0.005493166943223841,
+                "nll_iso_mean": 0.5379591559171677,
+                "ece_iso_adapt_mean": NaN,
+                "ece_beta_mean": NaN,
+                "brier_beta_mean": NaN,
+                "nll_beta_mean": NaN,
+                "ece_beta_adapt_mean": NaN
+            }
+        ]
+    },
+    "noise_1.0": {
+        "ece_ood": [
+            0.028614689409732823
+        ],
+        "brier_ood": [
+            0.07440494741787382
+        ],
+        "boot_clean": [
+            {
+                "ece_temp_mean": 0.008084835312838155,
+                "ece_temp_std": 0.008341130064689667,
+                "ece_temp_adapt_mean": 0.06558963604196975,
+                "ece_temp_adapt_std": 0.0017083974744513423,
+                "ece_iso_mean": 0.08748424591437214,
+                "ece_iso_std": 0.03799939443833477,
+                "brier_iso_mean": 0.08450315276274742,
+                "brier_iso_std": 0.01169176715989952,
+                "nll_iso_mean": 0.696439845085144,
+                "ece_iso_adapt_mean": NaN,
+                "ece_beta_mean": NaN,
+                "brier_beta_mean": NaN,
+                "nll_beta_mean": NaN,
+                "ece_beta_adapt_mean": NaN
+            }
+        ],
+        "boot_shifted": [
+            {
+                "ece_temp_mean": 0.02463123214759642,
+                "ece_temp_std": 0.00866696940440827,
+                "ece_temp_adapt_mean": 0.06892538940431793,
+                "ece_temp_adapt_std": 0.0017804187040656987,
+                "ece_iso_mean": 0.04585210067203617,
+                "ece_iso_std": 0.020544688467595502,
+                "brier_iso_mean": 0.07638909818798101,
+                "brier_iso_std": 0.002216564172902736,
+                "nll_iso_mean": 0.5696496438980102,
+                "ece_iso_adapt_mean": NaN,
+                "ece_beta_mean": NaN,
+                "brier_beta_mean": NaN,
+                "nll_beta_mean": NaN,
+                "ece_beta_adapt_mean": NaN
+            }
+        ]
+    },
+    "noise_2.0": {
+        "ece_ood": [
+            0.008575532138347622
+        ],
+        "brier_ood": [
+            0.05647629851396589
+        ],
+        "boot_clean": [
+            {
+                "ece_temp_mean": 0.02013329543226281,
+                "ece_temp_std": 0.0075402021421184205,
+                "ece_temp_adapt_mean": 0.059219557836010975,
+                "ece_temp_adapt_std": 0.0010880183792850312,
+                "ece_iso_mean": 0.09066445755423397,
+                "ece_iso_std": 0.046483338419820885,
+                "brier_iso_mean": 0.07151630076622503,
+                "brier_iso_std": 0.013059506961577275,
+                "nll_iso_mean": 0.5433034109473228,
+                "ece_iso_adapt_mean": NaN,
+                "ece_beta_mean": NaN,
+                "brier_beta_mean": NaN,
+                "nll_beta_mean": NaN,
+                "ece_beta_adapt_mean": NaN
+            }
+        ],
+        "boot_shifted": [
+            {
+                "ece_temp_mean": 0.016980006417020233,
+                "ece_temp_std": 0.008471916977337922,
+                "ece_temp_adapt_mean": 0.0593954916938149,
+                "ece_temp_adapt_std": 0.000745054185151532,
+                "ece_iso_mean": 0.05559739493499453,
+                "ece_iso_std": 0.03718165691615667,
+                "brier_iso_mean": 0.06121760584841489,
+                "brier_iso_std": 0.006009032395879829,
+                "nll_iso_mean": 0.2600902532041073,
+                "ece_iso_adapt_mean": NaN,
+                "ece_beta_mean": NaN,
+                "brier_beta_mean": NaN,
+                "nll_beta_mean": NaN,
+                "ece_beta_adapt_mean": NaN
+            }
+        ]
+    }
+}

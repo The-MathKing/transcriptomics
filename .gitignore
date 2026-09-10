@@ -1,24 +1,45 @@
+# Environments and virtual environments
 .venv/
- data/
- models/
- __pycache__/
- *.pyc
- .ipynb_checkpoints/
- paper.tex
- paper.pdf
- ref.bib
- implementation_plan.md
- proceedings_upgrade_plan.md
- referee_review.md
- task.md
- findings_upgrade_plan.md
- 
- # Exclude large data and archive files not needed for reviewers
- destvi_repro_zenodo.zip
- *.h5ad
- zenodo_data/
- *.zip
- 
- # Exclude all manuscript and PDF files from repository
- *.tex
- *.pdf
+venv/
+.DS_Store
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+scratch/
+
+# Large datasets, model weights, and intermediate raw files
+data/
+models/
+zenodo_data/
+DestVI-reproducibility/
+*.h5ad
+*.npy
+*.zip
+*.rds
+
+# LaTeX manuscripts, compilation artifacts, and PDFs (excluded from review repo)
+*.tex
+*.pdf
+*.cls
+*.sty
+*.bst
+*.aux
+*.log
+*.bbl
+*.blg
+*.out
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+oup-authoring-template/
+ref.bib
+reference.bib
+
+# Internal planning and drafting scratch files
+*.md
+!README.md
+README
+task.md
+manifest.txt
+disclosure_statement.txt
+convert_rds.R

@@ -1,0 +1,6 @@
+{
+  "accuracy": 0.789,
+  "mean_confidence": 0.6469659209251404,
+  "ece_uncalibrated": 0.14895722946524625,
+  "brier_score": 0.3037343206583738
+}

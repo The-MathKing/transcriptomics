@@ -1,0 +1,1341 @@
+{
+    "fractions": [
+        1.0,
+        0.8,
+        0.6,
+        0.4,
+        0.2
+    ],
+    "noise_levels": [
+        0.0,
+        0.5,
+        1.0,
+        2.0
+    ],
+    "epochs": 200,
+    "smoke_test": false,
+    "n_splits": 5,
+    "1.0": {
+        "ece_ood": [
+            0.6303482878506184,
+            0.6211120744645595,
+            0.325593043923378,
+            0.6432023263871669,
+            0.6329757999777794
+        ],
+        "ece_adapt_ood": [
+            0.6303482878506184,
+            0.6211120744645595,
+            0.32559304392337807,
+            0.6432023263871671,
+            0.6329757999777794
+        ],
+        "comp_rmse_ood": [
+            0.3939954232057731,
+            0.38093957045750526,
+            0.3745724757792248,
+            0.40404691951134736,
+            0.39562850249560605
+        ],
+        "boot_clean": [
+            {
+                "ece_temp_mean": 0.46405676389220163,
+                "ece_temp_std": 0.0,
+                "ece_temp_adapt_mean": 0.4640567638922011,
+                "ece_temp_adapt_std": 1.1102230246251565e-16,
+                "ece_iso_mean": 0.0019998807907104497,
+                "ece_iso_std": 4.336808689942018e-19,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            },
+            {
+                "ece_temp_mean": 0.4791964360660216,
+                "ece_temp_std": 1.6653345369377348e-16,
+                "ece_temp_adapt_mean": 0.4791964360660219,
+                "ece_temp_adapt_std": 0.0,
+                "ece_iso_mean": 0.004014263982148113,
+                "ece_iso_std": 0.0026877628003249597,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            },
+            {
+                "ece_temp_mean": 0.16269086437636293,
+                "ece_temp_std": 0.005256747062913387,
+                "ece_temp_adapt_mean": 0.17506013363692777,
+                "ece_temp_adapt_std": 0.006614937076269505,
+                "ece_iso_mean": 0.05176878156406805,
+                "ece_iso_std": 0.016566299542027273,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": 0.10278752436647172
+            },
+            {
+                "ece_temp_mean": 0.48216704988165787,
+                "ece_temp_std": 5.551115123125783e-17,
+                "ece_temp_adapt_mean": 0.4821670498816578,
+                "ece_temp_adapt_std": 5.551115123125783e-17,
+                "ece_iso_mean": 0.0009998807907104495,
+                "ece_iso_std": 2.168404344971009e-19,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            },
+            {
+                "ece_temp_mean": 0.4798428320509674,
+                "ece_temp_std": 1.1102230246251565e-16,
+                "ece_temp_adapt_mean": 0.4798428320509672,
+                "ece_temp_adapt_std": 1.6653345369377348e-16,
+                "ece_iso_mean": 0.0015321440076002408,
+                "ece_iso_std": 0.0016332216152584332,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            }
+        ],
+        "boot_shifted": [
+            {
+                "ece_temp_mean": 0.46405676389220163,
+                "ece_temp_std": 0.0,
+                "ece_temp_adapt_mean": 0.4640567638922011,
+                "ece_temp_adapt_std": 1.1102230246251565e-16,
+                "ece_iso_mean": 0.0019998807907104497,
+                "ece_iso_std": 4.336808689942018e-19,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            },
+            {
+                "ece_temp_mean": 0.4791964360660216,
+                "ece_temp_std": 1.6653345369377348e-16,
+                "ece_temp_adapt_mean": 0.4791964360660219,
+                "ece_temp_adapt_std": 0.0,
+                "ece_iso_mean": 0.004217640869492452,
+                "ece_iso_std": 0.0030468706587918593,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            },
+            {
+                "ece_temp_mean": 0.16149069860950158,
+                "ece_temp_std": 0.003303433660545323,
+                "ece_temp_adapt_mean": 0.17288548675885676,
+                "ece_temp_adapt_std": 0.004523159332624584,
+                "ece_iso_mean": 0.047785853170696654,
+                "ece_iso_std": 0.014632202373926475,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": 0.125
+            },
+            {
+                "ece_temp_mean": 0.48216704988165787,
+                "ece_temp_std": 5.551115123125783e-17,
+                "ece_temp_adapt_mean": 0.4821670498816578,
+                "ece_temp_adapt_std": 5.551115123125783e-17,
+                "ece_iso_mean": 0.0009998807907104495,
+                "ece_iso_std": 2.168404344971009e-19,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            },
+            {
+                "ece_temp_mean": 0.4798428320509674,
+                "ece_temp_std": 1.1102230246251565e-16,
+                "ece_temp_adapt_mean": 0.4798428320509672,
+                "ece_temp_adapt_std": 1.6653345369377348e-16,
+                "ece_iso_mean": 0.001972708932588957,
+                "ece_iso_std": 0.0017163162307813516,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            }
+        ]
+    },
+    "0.8": {
+        "ece_ood": [
+            0.6371547461748124,
+            0.628784411817789,
+            0.3326080322861671,
+            0.6491428931951524,
+            0.6383232918679713
+        ],
+        "ece_adapt_ood": [
+            0.6371547461748124,
+            0.6287844118177891,
+            0.3326080322861671,
+            0.6491428931951524,
+            0.6383232918679715
+        ],
+        "comp_rmse_ood": [
+            0.39662246054121464,
+            0.38393143118931433,
+            0.37686272309597657,
+            0.40634741398380536,
+            0.39724925265198097
+        ],
+        "boot_clean": [
+            {
+                "ece_temp_mean": 0.4685902150425724,
+                "ece_temp_std": 5.551115123125783e-17,
+                "ece_temp_adapt_mean": 0.4685902150425724,
+                "ece_temp_adapt_std": 5.551115123125783e-17,
+                "ece_iso_mean": 0.0019998807907104497,
+                "ece_iso_std": 4.336808689942018e-19,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            },
+            {
+                "ece_temp_mean": 0.4846513712933032,
+                "ece_temp_std": 1.1102230246251565e-16,
+                "ece_temp_adapt_mean": 0.48465137129330343,
+                "ece_temp_adapt_std": 1.1102230246251565e-16,
+                "ece_iso_mean": 0.004939578022231872,
+                "ece_iso_std": 0.002804542918631508,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            },
+            {
+                "ece_temp_mean": 0.1669191082304537,
+                "ece_temp_std": 0.005396482536569509,
+                "ece_temp_adapt_mean": 0.17876042303549727,
+                "ece_temp_adapt_std": 0.004851659177962033,
+                "ece_iso_mean": 0.051312736784442266,
+                "ece_iso_std": 0.016677221581242775,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": 0.09007713884992988
+            },
+            {
+                "ece_temp_mean": 0.4867999396794581,
+                "ece_temp_std": 5.551115123125783e-17,
+                "ece_temp_adapt_mean": 0.4867999396794583,
+                "ece_temp_adapt_std": 1.1102230246251565e-16,
+                "ece_iso_mean": 0.0009998807907104495,
+                "ece_iso_std": 2.168404344971009e-19,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            },
+            {
+                "ece_temp_mean": 0.4843285847130695,
+                "ece_temp_std": 5.551115123125783e-17,
+                "ece_temp_adapt_mean": 0.4843285847130695,
+                "ece_temp_adapt_std": 5.551115123125783e-17,
+                "ece_iso_mean": 0.0015385964574222452,
+                "ece_iso_std": 0.001640107052241925,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            }
+        ],
+        "boot_shifted": [
+            {
+                "ece_temp_mean": 0.4685902150425724,
+                "ece_temp_std": 5.551115123125783e-17,
+                "ece_temp_adapt_mean": 0.4685902150425724,
+                "ece_temp_adapt_std": 5.551115123125783e-17,
+                "ece_iso_mean": 0.0019998807907104497,
+                "ece_iso_std": 4.336808689942018e-19,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            },
+            {
+                "ece_temp_mean": 0.4846513712933032,
+                "ece_temp_std": 1.1102230246251565e-16,
+                "ece_temp_adapt_mean": 0.48465137129330343,
+                "ece_temp_adapt_std": 1.1102230246251565e-16,
+                "ece_iso_mean": 0.005099578899301706,
+                "ece_iso_std": 0.0032060014401815336,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            },
+            {
+                "ece_temp_mean": 0.16567957179134227,
+                "ece_temp_std": 0.0038979746930953665,
+                "ece_temp_adapt_mean": 0.17693955354599672,
+                "ece_temp_adapt_std": 0.003647823603645941,
+                "ece_iso_mean": 0.04412650743805804,
+                "ece_iso_std": 0.014685701393321544,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": 0.1111111111111111
+            },
+            {
+                "ece_temp_mean": 0.4867999396794581,
+                "ece_temp_std": 5.551115123125783e-17,
+                "ece_temp_adapt_mean": 0.4867999396794583,
+                "ece_temp_adapt_std": 1.1102230246251565e-16,
+                "ece_iso_mean": 0.0009998807907104495,
+                "ece_iso_std": 2.168404344971009e-19,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            },
+            {
+                "ece_temp_mean": 0.4843285847130695,
+                "ece_temp_std": 5.551115123125783e-17,
+                "ece_temp_adapt_mean": 0.4843285847130695,
+                "ece_temp_adapt_std": 5.551115123125783e-17,
+                "ece_iso_mean": 0.001985948955176318,
+                "ece_iso_std": 0.0017289931679719227,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            }
+        ]
+    },
+    "0.6": {
+        "ece_ood": [
+            0.6477094909846782,
+            0.6371269397437573,
+            0.34350549104809763,
+            0.6590291950702667,
+            0.6461895917057991
+        ],
+        "ece_adapt_ood": [
+            0.647248967319727,
+            0.6371269397437573,
+            0.34350549104809763,
+            0.6590291950702668,
+            0.6461895917057991
+        ],
+        "comp_rmse_ood": [
+            0.4005986713302253,
+            0.3879414803593462,
+            0.38043479310688616,
+            0.4103140150911342,
+            0.39932182143105627
+        ],
+        "boot_clean": [
+            {
+                "ece_temp_mean": 0.47523756923432364,
+                "ece_temp_std": 0.0,
+                "ece_temp_adapt_mean": 0.47523756923432386,
+                "ece_temp_adapt_std": 5.551115123125783e-17,
+                "ece_iso_mean": 0.0019998807907104497,
+                "ece_iso_std": 4.336808689942018e-19,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            },
+            {
+                "ece_temp_mean": 0.48971189902424167,
+                "ece_temp_std": 1.1102230246251565e-16,
+                "ece_temp_adapt_mean": 0.4897118990242415,
+                "ece_temp_adapt_std": 5.551115123125783e-17,
+                "ece_iso_mean": 0.004370737841622067,
+                "ece_iso_std": 0.00294464869777313,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            },
+            {
+                "ece_temp_mean": 0.1731801857451524,
+                "ece_temp_std": 0.008265002842753414,
+                "ece_temp_adapt_mean": 0.1870043700328418,
+                "ece_temp_adapt_std": 0.0064695545795569066,
+                "ece_iso_mean": 0.05084643253380433,
+                "ece_iso_std": 0.01733618223661481,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": 0.07038019451812555
+            },
+            {
+                "ece_temp_mean": 0.4937240099771439,
+                "ece_temp_std": 1.6653345369377348e-16,
+                "ece_temp_adapt_mean": 0.49372400997714405,
+                "ece_temp_adapt_std": 1.1102230246251565e-16,
+                "ece_iso_mean": 0.0009998807907104495,
+                "ece_iso_std": 2.168404344971009e-19,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            },
+            {
+                "ece_temp_mean": 0.4905126285033177,
+                "ece_temp_std": 1.6653345369377348e-16,
+                "ece_temp_adapt_mean": 0.4905126285033177,
+                "ece_temp_adapt_std": 1.6653345369377348e-16,
+                "ece_iso_mean": 0.0017257227462648007,
+                "ece_iso_std": 0.0016266567031794467,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            }
+        ],
+        "boot_shifted": [
+            {
+                "ece_temp_mean": 0.47523756923432364,
+                "ece_temp_std": 0.0,
+                "ece_temp_adapt_mean": 0.47523756923432386,
+                "ece_temp_adapt_std": 5.551115123125783e-17,
+                "ece_iso_mean": 0.0019998807907104497,
+                "ece_iso_std": 4.336808689942018e-19,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            },
+            {
+                "ece_temp_mean": 0.48971189902424167,
+                "ece_temp_std": 1.1102230246251565e-16,
+                "ece_temp_adapt_mean": 0.4897118990242415,
+                "ece_temp_adapt_std": 5.551115123125783e-17,
+                "ece_iso_mean": 0.004192271041842614,
+                "ece_iso_std": 0.002807573228891805,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            },
+            {
+                "ece_temp_mean": 0.1702257792869203,
+                "ece_temp_std": 0.004504912661981058,
+                "ece_temp_adapt_mean": 0.18454014238945263,
+                "ece_temp_adapt_std": 0.003425751918310381,
+                "ece_iso_mean": 0.04796200822479091,
+                "ece_iso_std": 0.01815340648481987,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            },
+            {
+                "ece_temp_mean": 0.4937240099771439,
+                "ece_temp_std": 1.6653345369377348e-16,
+                "ece_temp_adapt_mean": 0.49372400997714405,
+                "ece_temp_adapt_std": 1.1102230246251565e-16,
+                "ece_iso_mean": 0.0009998807907104495,
+                "ece_iso_std": 2.168404344971009e-19,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            },
+            {
+                "ece_temp_mean": 0.4905126285033177,
+                "ece_temp_std": 1.6653345369377348e-16,
+                "ece_temp_adapt_mean": 0.4905126285033177,
+                "ece_temp_adapt_std": 1.6653345369377348e-16,
+                "ece_iso_mean": 0.0019553614986930912,
+                "ece_iso_std": 0.0018672975808722027,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            }
+        ]
+    },
+    "0.4": {
+        "ece_ood": [
+            0.6625657581090926,
+            0.6513034769892693,
+            0.36046894171833993,
+            0.6726163431704044,
+            0.6584743250012398
+        ],
+        "ece_adapt_ood": [
+            0.6625657581090927,
+            0.6513034769892694,
+            0.36046894171833993,
+            0.6721935655176641,
+            0.6584743250012399
+        ],
+        "comp_rmse_ood": [
+            0.4058011193476069,
+            0.3946082461123406,
+            0.38547636474530317,
+            0.4153272726336191,
+            0.4035292408953894
+        ],
+        "boot_clean": [
+            {
+                "ece_temp_mean": 0.48623902129387353,
+                "ece_temp_std": 1.6653345369377348e-16,
+                "ece_temp_adapt_mean": 0.4862390212938732,
+                "ece_temp_adapt_std": 0.0,
+                "ece_iso_mean": 0.0009998807907104495,
+                "ece_iso_std": 2.168404344971009e-19,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            },
+            {
+                "ece_temp_mean": 0.49957273345561326,
+                "ece_temp_std": 1.1102230246251565e-16,
+                "ece_temp_adapt_mean": 0.4995727334556134,
+                "ece_temp_adapt_std": 1.1102230246251565e-16,
+                "ece_iso_mean": 0.004382523715562384,
+                "ece_iso_std": 0.002946036592195377,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            },
+            {
+                "ece_temp_mean": 0.18469338083689418,
+                "ece_temp_std": 0.008613398270231517,
+                "ece_temp_adapt_mean": 0.18544136395570254,
+                "ece_temp_adapt_std": 0.008281582762439592,
+                "ece_iso_mean": 0.055685728424517425,
+                "ece_iso_std": 0.019817330091336193,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": 0.12235619834404027
+            },
+            {
+                "ece_temp_mean": 0.5040874633283189,
+                "ece_temp_std": 1.1102230246251565e-16,
+                "ece_temp_adapt_mean": 0.5040874633283189,
+                "ece_temp_adapt_std": 1.1102230246251565e-16,
+                "ece_iso_mean": 0.0009998807907104495,
+                "ece_iso_std": 2.168404344971009e-19,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            },
+            {
+                "ece_temp_mean": 0.5008409700148294,
+                "ece_temp_std": 1.1102230246251565e-16,
+                "ece_temp_adapt_mean": 0.5008409700148294,
+                "ece_temp_adapt_std": 1.1102230246251565e-16,
+                "ece_iso_mean": 0.0017437153917801334,
+                "ece_iso_std": 0.0016436157413749959,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            }
+        ],
+        "boot_shifted": [
+            {
+                "ece_temp_mean": 0.48623902129387353,
+                "ece_temp_std": 1.6653345369377348e-16,
+                "ece_temp_adapt_mean": 0.4862390212938732,
+                "ece_temp_adapt_std": 0.0,
+                "ece_iso_mean": 0.0009998807907104495,
+                "ece_iso_std": 2.168404344971009e-19,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            },
+            {
+                "ece_temp_mean": 0.49957273345561326,
+                "ece_temp_std": 1.1102230246251565e-16,
+                "ece_temp_adapt_mean": 0.4995727334556134,
+                "ece_temp_adapt_std": 1.1102230246251565e-16,
+                "ece_iso_mean": 0.0028692678332312422,
+                "ece_iso_std": 0.0023532625206464665,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            },
+            {
+                "ece_temp_mean": 0.18116414182249024,
+                "ece_temp_std": 0.0019096240669628243,
+                "ece_temp_adapt_mean": 0.18210268020486342,
+                "ece_temp_adapt_std": 0.0016041144106829202,
+                "ece_iso_mean": 0.04048144480499905,
+                "ece_iso_std": 0.015265373469973167,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            },
+            {
+                "ece_temp_mean": 0.5040874633283189,
+                "ece_temp_std": 1.1102230246251565e-16,
+                "ece_temp_adapt_mean": 0.5040874633283189,
+                "ece_temp_adapt_std": 1.1102230246251565e-16,
+                "ece_iso_mean": 0.0009998807907104495,
+                "ece_iso_std": 2.168404344971009e-19,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            },
+            {
+                "ece_temp_mean": 0.5008409700148294,
+                "ece_temp_std": 1.1102230246251565e-16,
+                "ece_temp_adapt_mean": 0.5008409700148294,
+                "ece_temp_adapt_std": 1.1102230246251565e-16,
+                "ece_iso_mean": 0.0019472100497880999,
+                "ece_iso_std": 0.0018580770314651697,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            }
+        ]
+    },
+    "0.2": {
+        "ece_ood": [
+            0.6931256949305533,
+            0.6766858147084713,
+            0.3919939145743847,
+            0.7023918843269348,
+            0.6830856320559978
+        ],
+        "ece_adapt_ood": [
+            0.6931256949305535,
+            0.6766858147084713,
+            0.3919939145743847,
+            0.7023918843269348,
+            0.6830856320559978
+        ],
+        "comp_rmse_ood": [
+            0.4169070649288176,
+            0.4068243359796966,
+            0.395758644133371,
+            0.42757105036553567,
+            0.41107430152234053
+        ],
+        "boot_clean": [
+            {
+                "ece_temp_mean": 0.5073440916164547,
+                "ece_temp_std": 1.1102230246251565e-16,
+                "ece_temp_adapt_mean": 0.5073440916164547,
+                "ece_temp_adapt_std": 1.1102230246251565e-16,
+                "ece_iso_mean": 0.0009998807907104495,
+                "ece_iso_std": 2.168404344971009e-19,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            },
+            {
+                "ece_temp_mean": 0.5180217766033952,
+                "ece_temp_std": 0.0,
+                "ece_temp_adapt_mean": 0.5180217766033957,
+                "ece_temp_adapt_std": 2.220446049250313e-16,
+                "ece_iso_mean": 0.002597268309204592,
+                "ece_iso_std": 0.0022375706229163907,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            },
+            {
+                "ece_temp_mean": 0.20614863095156682,
+                "ece_temp_std": 0.00707754184211005,
+                "ece_temp_adapt_mean": 0.20614863095156685,
+                "ece_temp_adapt_std": 0.00707754184211013,
+                "ece_iso_mean": 0.06943515789014143,
+                "ece_iso_std": 0.02781400297544944,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": 0.0,
+                "hc_prec_iso_mean": 0.17711609317961124
+            },
+            {
+                "ece_temp_mean": 0.5274062134120907,
+                "ece_temp_std": 1.1102230246251565e-16,
+                "ece_temp_adapt_mean": 0.5274062134120907,
+                "ece_temp_adapt_std": 1.1102230246251565e-16,
+                "ece_iso_mean": 0.0009998807907104495,
+                "ece_iso_std": 2.168404344971009e-19,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            },
+            {
+                "ece_temp_mean": 0.5211658225213557,
+                "ece_temp_std": 1.1102230246251565e-16,
+                "ece_temp_adapt_mean": 0.5211658225213557,
+                "ece_temp_adapt_std": 0.0,
+                "ece_iso_mean": 0.0014393734460929409,
+                "ece_iso_std": 0.0010931143438662877,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            }
+        ],
+        "boot_shifted": [
+            {
+                "ece_temp_mean": 0.5073440916164547,
+                "ece_temp_std": 1.1102230246251565e-16,
+                "ece_temp_adapt_mean": 0.5073440916164547,
+                "ece_temp_adapt_std": 1.1102230246251565e-16,
+                "ece_iso_mean": 0.0009998807907104495,
+                "ece_iso_std": 2.168404344971009e-19,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            },
+            {
+                "ece_temp_mean": 0.5180217766033952,
+                "ece_temp_std": 0.0,
+                "ece_temp_adapt_mean": 0.5180217766033957,
+                "ece_temp_adapt_std": 2.220446049250313e-16,
+                "ece_iso_mean": 0.0018979157835940714,
+                "ece_iso_std": 0.0009956745476203024,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            },
+            {
+                "ece_temp_mean": 0.20211622418790426,
+                "ece_temp_std": 0.0,
+                "ece_temp_adapt_mean": 0.20211622418790412,
+                "ece_temp_adapt_std": 5.551115123125783e-17,
+                "ece_iso_mean": 0.056363987923236554,
+                "ece_iso_std": 0.013484402787552547,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            },
+            {
+                "ece_temp_mean": 0.5274062134120907,
+                "ece_temp_std": 1.1102230246251565e-16,
+                "ece_temp_adapt_mean": 0.5274062134120907,
+                "ece_temp_adapt_std": 1.1102230246251565e-16,
+                "ece_iso_mean": 0.001324845604625316,
+                "ece_iso_std": 0.0010413799540837446,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            },
+            {
+                "ece_temp_mean": 0.5211658225213557,
+                "ece_temp_std": 1.1102230246251565e-16,
+                "ece_temp_adapt_mean": 0.5211658225213557,
+                "ece_temp_adapt_std": 0.0,
+                "ece_iso_mean": 0.0027565278328332355,
+                "ece_iso_std": 0.002455153886924953,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            }
+        ]
+    },
+    "noise_0.0": {
+        "ece_ood": [
+            0.6244010500907898,
+            0.6154278725087643,
+            0.3176199521720409,
+            0.6375136126577855,
+            0.6281767706274987
+        ],
+        "ece_adapt_ood": [
+            0.6239726872444153,
+            0.6154278725087643,
+            0.3176199521720409,
+            0.6375136126577854,
+            0.6281767706274987
+        ],
+        "comp_rmse_ood": [
+            0.3911981490142774,
+            0.37824185717491177,
+            0.371920111624466,
+            0.4017543720408881,
+            0.3940111616616184
+        ],
+        "boot_clean": [
+            {
+                "ece_temp_mean": 0.45780073293132895,
+                "ece_temp_std": 1.6653345369377348e-16,
+                "ece_temp_adapt_mean": 0.457800732931328,
+                "ece_temp_adapt_std": 2.220446049250313e-16,
+                "ece_iso_mean": 0.0019998807907104497,
+                "ece_iso_std": 4.336808689942018e-19,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            },
+            {
+                "ece_temp_mean": 0.4730803680512247,
+                "ece_temp_std": 1.6653345369377348e-16,
+                "ece_temp_adapt_mean": 0.473080368051225,
+                "ece_temp_adapt_std": 1.1102230246251565e-16,
+                "ece_iso_mean": 0.0037956558777211464,
+                "ece_iso_std": 0.002737016072162075,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            },
+            {
+                "ece_temp_mean": 0.1552506700648394,
+                "ece_temp_std": 0.007014061430152606,
+                "ece_temp_adapt_mean": 0.16738405180811403,
+                "ece_temp_adapt_std": 0.006707472799684777,
+                "ece_iso_mean": 0.04587647331181463,
+                "ece_iso_std": 0.015444708859202586,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": 0.13333333333333333
+            },
+            {
+                "ece_temp_mean": 0.4748518190499567,
+                "ece_temp_std": 2.220446049250313e-16,
+                "ece_temp_adapt_mean": 0.47485181904995644,
+                "ece_temp_adapt_std": 0.0,
+                "ece_iso_mean": 0.0009998807907104495,
+                "ece_iso_std": 2.168404344971009e-19,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            },
+            {
+                "ece_temp_mean": 0.47263037246327605,
+                "ece_temp_std": 0.0,
+                "ece_temp_adapt_mean": 0.47263037246327605,
+                "ece_temp_adapt_std": 5.551115123125783e-17,
+                "ece_iso_mean": 0.0018569117473893127,
+                "ece_iso_std": 0.0016641508607864522,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            }
+        ],
+        "boot_shifted": [
+            {
+                "ece_temp_mean": 0.45780073293132895,
+                "ece_temp_std": 1.6653345369377348e-16,
+                "ece_temp_adapt_mean": 0.457800732931328,
+                "ece_temp_adapt_std": 2.220446049250313e-16,
+                "ece_iso_mean": 0.0019998807907104497,
+                "ece_iso_std": 4.336808689942018e-19,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            },
+            {
+                "ece_temp_mean": 0.4730803680512247,
+                "ece_temp_std": 1.6653345369377348e-16,
+                "ece_temp_adapt_mean": 0.473080368051225,
+                "ece_temp_adapt_std": 1.1102230246251565e-16,
+                "ece_iso_mean": 0.004081935190201621,
+                "ece_iso_std": 0.0027421299215192882,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            },
+            {
+                "ece_temp_mean": 0.1558286434945833,
+                "ece_temp_std": 0.007498646791702117,
+                "ece_temp_adapt_mean": 0.16798862289751768,
+                "ece_temp_adapt_std": 0.0070784099996174035,
+                "ece_iso_mean": 0.04676845053236248,
+                "ece_iso_std": 0.017485020160859045,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": 0.13333333333333333
+            },
+            {
+                "ece_temp_mean": 0.4748518190499567,
+                "ece_temp_std": 2.220446049250313e-16,
+                "ece_temp_adapt_mean": 0.47485181904995644,
+                "ece_temp_adapt_std": 0.0,
+                "ece_iso_mean": 0.0009998807907104495,
+                "ece_iso_std": 2.168404344971009e-19,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            },
+            {
+                "ece_temp_mean": 0.47263037246327605,
+                "ece_temp_std": 0.0,
+                "ece_temp_adapt_mean": 0.47263037246327605,
+                "ece_temp_adapt_std": 5.551115123125783e-17,
+                "ece_iso_mean": 0.001924072224381689,
+                "ece_iso_std": 0.0016561723347830678,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            }
+        ]
+    },
+    "noise_0.5": {
+        "ece_ood": [
+            0.6045323107242583,
+            0.5978076727688313,
+            0.286726641535759,
+            0.6238940615355968,
+            0.608605576545
+        ],
+        "ece_adapt_ood": [
+            0.6040603940486908,
+            0.5978076727688313,
+            0.286726641535759,
+            0.6238940615355969,
+            0.608605576545
+        ],
+        "comp_rmse_ood": [
+            0.3815294468163998,
+            0.3707302100250244,
+            0.36270483350185206,
+            0.39847061565584524,
+            0.3820484545204923
+        ],
+        "boot_clean": [
+            {
+                "ece_temp_mean": 0.4243344050750279,
+                "ece_temp_std": 0.0,
+                "ece_temp_adapt_mean": 0.4243344050750279,
+                "ece_temp_adapt_std": 0.0,
+                "ece_iso_mean": 0.0019998807907104497,
+                "ece_iso_std": 4.336808689942018e-19,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            },
+            {
+                "ece_temp_mean": 0.42592295397233526,
+                "ece_temp_std": 1.1102230246251565e-16,
+                "ece_temp_adapt_mean": 0.425922953972335,
+                "ece_temp_adapt_std": 1.6653345369377348e-16,
+                "ece_iso_mean": 0.002508776066011906,
+                "ece_iso_std": 0.0016988823489025486,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            },
+            {
+                "ece_temp_mean": 0.10533743660192917,
+                "ece_temp_std": 0.007389882707458516,
+                "ece_temp_adapt_mean": 0.12170706385385084,
+                "ece_temp_adapt_std": 0.0047061253425580455,
+                "ece_iso_mean": 0.04219638649988105,
+                "ece_iso_std": 0.015624165648872439,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": 0.0
+            },
+            {
+                "ece_temp_mean": 0.42874246063154936,
+                "ece_temp_std": 5.551115123125783e-17,
+                "ece_temp_adapt_mean": 0.42874246063154986,
+                "ece_temp_adapt_std": 1.1102230246251565e-16,
+                "ece_iso_mean": 0.0009998807907104495,
+                "ece_iso_std": 2.168404344971009e-19,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            },
+            {
+                "ece_temp_mean": 0.4193776096322472,
+                "ece_temp_std": 5.551115123125783e-17,
+                "ece_temp_adapt_mean": 0.41937760963224696,
+                "ece_temp_adapt_std": 5.551115123125783e-17,
+                "ece_iso_mean": 0.0018137192640014835,
+                "ece_iso_std": 0.0016254820552583239,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            }
+        ],
+        "boot_shifted": [
+            {
+                "ece_temp_mean": 0.4243344050750279,
+                "ece_temp_std": 0.0,
+                "ece_temp_adapt_mean": 0.4243344050750279,
+                "ece_temp_adapt_std": 0.0,
+                "ece_iso_mean": 0.0019998807907104497,
+                "ece_iso_std": 4.336808689942018e-19,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            },
+            {
+                "ece_temp_mean": 0.42592295397233526,
+                "ece_temp_std": 1.1102230246251565e-16,
+                "ece_temp_adapt_mean": 0.425922953972335,
+                "ece_temp_adapt_std": 1.6653345369377348e-16,
+                "ece_iso_mean": 0.0025694254369379448,
+                "ece_iso_std": 0.0015153824846364365,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            },
+            {
+                "ece_temp_mean": 0.10133951054320761,
+                "ece_temp_std": 4.163336342344337e-17,
+                "ece_temp_adapt_mean": 0.11872278442836676,
+                "ece_temp_adapt_std": 2.7755575615628914e-17,
+                "ece_iso_mean": 0.04557639437408187,
+                "ece_iso_std": 0.017763130828269403,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": 0.11739130434782608
+            },
+            {
+                "ece_temp_mean": 0.42874246063154936,
+                "ece_temp_std": 5.551115123125783e-17,
+                "ece_temp_adapt_mean": 0.42874246063154986,
+                "ece_temp_adapt_std": 1.1102230246251565e-16,
+                "ece_iso_mean": 0.0009998807907104495,
+                "ece_iso_std": 2.168404344971009e-19,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            },
+            {
+                "ece_temp_mean": 0.4193776096322472,
+                "ece_temp_std": 5.551115123125783e-17,
+                "ece_temp_adapt_mean": 0.41937760963224696,
+                "ece_temp_adapt_std": 5.551115123125783e-17,
+                "ece_iso_mean": 0.0019289745126207709,
+                "ece_iso_std": 0.0016564883729893278,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            }
+        ]
+    },
+    "noise_1.0": {
+        "ece_ood": [
+            0.5820583518445491,
+            0.5785077456831932,
+            0.26107437920570375,
+            0.613084274083376,
+            0.5916212802529335
+        ],
+        "ece_adapt_ood": [
+            0.5811027926504613,
+            0.5785077456831933,
+            0.26107437920570375,
+            0.613084274083376,
+            0.5916212802529335
+        ],
+        "comp_rmse_ood": [
+            0.3715933718448396,
+            0.3615285321999972,
+            0.3549534137380778,
+            0.39684211306493716,
+            0.3733142616635735
+        ],
+        "boot_clean": [
+            {
+                "ece_temp_mean": 0.40030781909164204,
+                "ece_temp_std": 1.1102230246251565e-16,
+                "ece_temp_adapt_mean": 0.40030781909164176,
+                "ece_temp_adapt_std": 1.1102230246251565e-16,
+                "ece_iso_mean": 0.0019998807907104497,
+                "ece_iso_std": 4.336808689942018e-19,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            },
+            {
+                "ece_temp_mean": 0.393761714084007,
+                "ece_temp_std": 5.551115123125783e-17,
+                "ece_temp_adapt_mean": 0.3937617140840068,
+                "ece_temp_adapt_std": 5.551115123125783e-17,
+                "ece_iso_mean": 0.0025145619690387683,
+                "ece_iso_std": 0.0017187294021744572,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            },
+            {
+                "ece_temp_mean": 0.08237203286133075,
+                "ece_temp_std": 0.006773202720851309,
+                "ece_temp_adapt_mean": 0.09634135031221462,
+                "ece_temp_adapt_std": 0.006071692809680528,
+                "ece_iso_mean": 0.03878904926073271,
+                "ece_iso_std": 0.013840151853376817,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            },
+            {
+                "ece_temp_mean": 0.4114199758356019,
+                "ece_temp_std": 5.551115123125783e-17,
+                "ece_temp_adapt_mean": 0.411419975835602,
+                "ece_temp_adapt_std": 1.1102230246251565e-16,
+                "ece_iso_mean": 0.0009998807907104495,
+                "ece_iso_std": 2.168404344971009e-19,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            },
+            {
+                "ece_temp_mean": 0.39903716572838727,
+                "ece_temp_std": 0.0,
+                "ece_temp_adapt_mean": 0.3990371657283874,
+                "ece_temp_adapt_std": 0.0,
+                "ece_iso_mean": 0.0017425130400653144,
+                "ece_iso_std": 0.0015616297957174695,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            }
+        ],
+        "boot_shifted": [
+            {
+                "ece_temp_mean": 0.40030781909164204,
+                "ece_temp_std": 1.1102230246251565e-16,
+                "ece_temp_adapt_mean": 0.40030781909164176,
+                "ece_temp_adapt_std": 1.1102230246251565e-16,
+                "ece_iso_mean": 0.0019998807907104497,
+                "ece_iso_std": 4.336808689942018e-19,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            },
+            {
+                "ece_temp_mean": 0.393761714084007,
+                "ece_temp_std": 5.551115123125783e-17,
+                "ece_temp_adapt_mean": 0.3937617140840068,
+                "ece_temp_adapt_std": 5.551115123125783e-17,
+                "ece_iso_mean": 0.0023892295855045087,
+                "ece_iso_std": 0.0016222254523825133,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            },
+            {
+                "ece_temp_mean": 0.07908514488410773,
+                "ece_temp_std": 0.001449781776920625,
+                "ece_temp_adapt_mean": 0.09328816007967974,
+                "ece_temp_adapt_std": 0.0013905985602479787,
+                "ece_iso_mean": 0.05373828575541267,
+                "ece_iso_std": 0.01758822743334973,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": 0.07142857142857142
+            },
+            {
+                "ece_temp_mean": 0.4114199758356019,
+                "ece_temp_std": 5.551115123125783e-17,
+                "ece_temp_adapt_mean": 0.411419975835602,
+                "ece_temp_adapt_std": 1.1102230246251565e-16,
+                "ece_iso_mean": 0.0009998807907104495,
+                "ece_iso_std": 2.168404344971009e-19,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            },
+            {
+                "ece_temp_mean": 0.39903716572838727,
+                "ece_temp_std": 0.0,
+                "ece_temp_adapt_mean": 0.3990371657283874,
+                "ece_temp_adapt_std": 0.0,
+                "ece_iso_mean": 0.0019666033086418976,
+                "ece_iso_std": 0.001681880326528356,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            }
+        ]
+    },
+    "noise_2.0": {
+        "ece_ood": [
+            0.5470142714083194,
+            0.5490244135558606,
+            0.2151749513745308,
+            0.6039468468725682,
+            0.5703106906414032
+        ],
+        "ece_adapt_ood": [
+            0.5470142714083195,
+            0.5490244135558605,
+            0.2151749513745308,
+            0.6039468468725682,
+            0.5703106906414033
+        ],
+        "comp_rmse_ood": [
+            0.35821431107954954,
+            0.34696496154541456,
+            0.34334306130104586,
+            0.3952328022839839,
+            0.367519467418478
+        ],
+        "boot_clean": [
+            {
+                "ece_temp_mean": 0.3756037178069939,
+                "ece_temp_std": 5.551115123125783e-17,
+                "ece_temp_adapt_mean": 0.3756037178069942,
+                "ece_temp_adapt_std": 5.551115123125783e-17,
+                "ece_iso_mean": 0.00399988079071045,
+                "ece_iso_std": 8.673617379884035e-19,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            },
+            {
+                "ece_temp_mean": 0.36807091066569336,
+                "ece_temp_std": 5.551115123125783e-17,
+                "ece_temp_adapt_mean": 0.36807091066569314,
+                "ece_temp_adapt_std": 0.0,
+                "ece_iso_mean": 0.0025245998403759947,
+                "ece_iso_std": 0.0017100368254616347,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            },
+            {
+                "ece_temp_mean": 0.05386585448903961,
+                "ece_temp_std": 0.005721530985265714,
+                "ece_temp_adapt_mean": 0.07502378017064912,
+                "ece_temp_adapt_std": 0.004748017941480236,
+                "ece_iso_mean": 0.07402036247084333,
+                "ece_iso_std": 0.026082851845355113,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            },
+            {
+                "ece_temp_mean": 0.3970443246108995,
+                "ece_temp_std": 5.551115123125783e-17,
+                "ece_temp_adapt_mean": 0.3970443246108997,
+                "ece_temp_adapt_std": 1.6653345369377348e-16,
+                "ece_iso_mean": 0.0009998807907104495,
+                "ece_iso_std": 2.168404344971009e-19,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            },
+            {
+                "ece_temp_mean": 0.3828681015480593,
+                "ece_temp_std": 1.1102230246251565e-16,
+                "ece_temp_adapt_mean": 0.3828681015480584,
+                "ece_temp_adapt_std": 1.1102230246251565e-16,
+                "ece_iso_mean": 0.0016082405116481094,
+                "ece_iso_std": 0.0014412881689878742,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            }
+        ],
+        "boot_shifted": [
+            {
+                "ece_temp_mean": 0.3756037178069939,
+                "ece_temp_std": 5.551115123125783e-17,
+                "ece_temp_adapt_mean": 0.3756037178069942,
+                "ece_temp_adapt_std": 5.551115123125783e-17,
+                "ece_iso_mean": 0.00399988079071045,
+                "ece_iso_std": 8.673617379884035e-19,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            },
+            {
+                "ece_temp_mean": 0.36807091066569336,
+                "ece_temp_std": 5.551115123125783e-17,
+                "ece_temp_adapt_mean": 0.36807091066569314,
+                "ece_temp_adapt_std": 0.0,
+                "ece_iso_mean": 0.002627317838680865,
+                "ece_iso_std": 0.001275884560131592,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            },
+            {
+                "ece_temp_mean": 0.05285637971500825,
+                "ece_temp_std": 0.004745405547116684,
+                "ece_temp_adapt_mean": 0.07452727357644172,
+                "ece_temp_adapt_std": 0.00355755690277883,
+                "ece_iso_mean": 0.04683518020725876,
+                "ece_iso_std": 0.014996851607223749,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": 0.14019607843137255
+            },
+            {
+                "ece_temp_mean": 0.3970443246108995,
+                "ece_temp_std": 5.551115123125783e-17,
+                "ece_temp_adapt_mean": 0.3970443246108997,
+                "ece_temp_adapt_std": 1.6653345369377348e-16,
+                "ece_iso_mean": 0.0009998807907104495,
+                "ece_iso_std": 2.168404344971009e-19,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            },
+            {
+                "ece_temp_mean": 0.3828681015480593,
+                "ece_temp_std": 1.1102230246251565e-16,
+                "ece_temp_adapt_mean": 0.3828681015480584,
+                "ece_temp_adapt_std": 1.1102230246251565e-16,
+                "ece_iso_mean": 0.0019221951682472718,
+                "ece_iso_std": 0.0016569151268025527,
+                "ece_iso_adapt_mean": NaN,
+                "ece_iso_adapt_std": NaN,
+                "hc_prec_temp_mean": NaN,
+                "hc_prec_iso_mean": NaN
+            }
+        ]
+    }
+}
